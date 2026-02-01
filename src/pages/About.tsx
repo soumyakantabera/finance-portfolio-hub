@@ -149,7 +149,7 @@ const About = () => {
 
           {/* Education Section */}
           {education && education.length > 0 && (
-            <section className="mb-12">
+            <section id="education" className="mb-12 scroll-mt-20">
               <h2 className="text-2xl font-bold mb-6">Education</h2>
               <div className="space-y-6">
                 {education.map((edu) => (
@@ -181,7 +181,7 @@ const About = () => {
 
           {/* Skills Section */}
           {skillsByCategory && Object.keys(skillsByCategory).length > 0 && (
-            <section className="mb-12">
+            <section id="skills" className="mb-12 scroll-mt-20">
               <h2 className="text-2xl font-bold mb-6">Skills</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {Object.entries(skillsByCategory).map(([category, categorySkills]) => (
@@ -208,7 +208,7 @@ const About = () => {
 
           {/* Certifications Section */}
           {certifications && certifications.length > 0 && (
-            <section>
+            <section id="certifications" className="scroll-mt-20">
               <h2 className="text-2xl font-bold mb-6">Certifications</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {certifications.map((cert) => (
