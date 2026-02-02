@@ -9,15 +9,12 @@ export function ProfileSummary() {
 
   if (isLoading) {
     return (
-      <section className="py-16 md:py-24">
+      <section className="py-24 md:py-32">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Skeleton className="h-64 rounded-2xl" />
-            <div className="lg:col-span-2 space-y-4">
-              <Skeleton className="h-8 w-1/3" />
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-10 w-32" />
-            </div>
+          <div className="max-w-4xl">
+            <Skeleton className="h-4 w-24 mb-8" />
+            <Skeleton className="h-16 w-full mb-6" />
+            <Skeleton className="h-6 w-3/4" />
           </div>
         </div>
       </section>
@@ -25,54 +22,36 @@ export function ProfileSummary() {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-muted/30">
+    <section className="py-24 md:py-32 border-b border-border">
       <div className="container">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-          {/* Profile Image */}
-          <div className="relative">
-            <div className="relative rounded-2xl overflow-hidden shadow-card">
-              {profile?.photo_url ? (
-                <img
-                  src={profile.photo_url}
-                  alt={profile.name}
-                  className="w-full aspect-square object-cover"
-                />
-              ) : (
-                <div className="bg-gradient-navy w-full aspect-square flex items-center justify-center">
-                  <span className="text-7xl font-display font-bold text-primary-foreground/30">
-                    {profile?.name?.charAt(0) || '?'}
-                  </span>
-                </div>
-              )}
-            </div>
-            {/* Decorative element */}
-            <div className="absolute -bottom-3 -right-3 w-full h-full border-2 border-accent/30 rounded-2xl -z-10" />
-          </div>
+        <div className="max-w-4xl">
+          {/* Label */}
+          <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground font-medium mb-8">
+            About
+          </p>
 
-          {/* Profile Info */}
-          <div className="lg:col-span-2 space-y-6">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-                About Me
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                {profile?.tagline || 'Finance Professional'}
-              </p>
-            </div>
+          {/* Bio */}
+          <p className="text-3xl md:text-4xl lg:text-5xl font-display font-medium leading-tight mb-12">
+            {profile?.bio || 'Welcome to my portfolio. I am passionate about finance and data-driven decision making.'}
+          </p>
 
-            <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
-              {profile?.bio || 'Welcome to my portfolio. I am passionate about finance and data-driven decision making.'}
-            </p>
+          {/* Links Row */}
+          <div className="flex flex-wrap items-center gap-8 pt-4">
+            <Button asChild variant="outline" className="h-12 px-6 border-foreground hover:bg-foreground hover:text-background">
+              <Link to="/about">
+                Learn More
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
 
-            {/* Social Links */}
-            <div className="flex flex-wrap gap-4 pt-2">
+            <div className="flex items-center gap-6">
               {profile?.email && (
                 <a
                   href={`mailto:${profile.email}`}
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Email"
                 >
-                  <Mail className="h-4 w-4" />
-                  {profile.email}
+                  <Mail className="h-5 w-5" />
                 </a>
               )}
               {profile?.linkedin_url && (
@@ -80,10 +59,10 @@ export function ProfileSummary() {
                   href={profile.linkedin_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="LinkedIn"
                 >
-                  <Linkedin className="h-4 w-4" />
-                  LinkedIn
+                  <Linkedin className="h-5 w-5" />
                 </a>
               )}
               {profile?.github_url && (
@@ -91,30 +70,24 @@ export function ProfileSummary() {
                   href={profile.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="GitHub"
                 >
-                  <Github className="h-4 w-4" />
-                  GitHub
+                  <Github className="h-5 w-5" />
                 </a>
               )}
             </div>
 
-            {/* CTA */}
-            <div className="flex flex-wrap gap-4 pt-2">
-              <Button asChild className="h-12 px-6">
-                <Link to="/about">
-                  Learn More About Me
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              {profile?.resume_url && (
-                <Button asChild variant="outline" className="h-12 px-6">
-                  <a href={profile.resume_url} target="_blank" rel="noopener noreferrer">
-                    View Resume
-                  </a>
-                </Button>
-              )}
-            </div>
+            {profile?.resume_url && (
+              <a 
+                href={profile.resume_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+              >
+                Resume
+              </a>
+            )}
           </div>
         </div>
       </div>

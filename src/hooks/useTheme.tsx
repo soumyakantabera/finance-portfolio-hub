@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-export type ThemeName = 'navy-gold' | 'emerald' | 'rose' | 'purple' | 'ocean' | 'sunset';
+export type ThemeName = 'mono' | 'navy-gold' | 'emerald' | 'rose' | 'purple' | 'ocean' | 'sunset';
 
 interface ThemeContextType {
   theme: ThemeName;
@@ -10,6 +10,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const themes: { name: ThemeName; label: string; preview: string }[] = [
+  { name: 'mono', label: 'Monochrome', preview: 'bg-[#0a0a0a]' },
   { name: 'navy-gold', label: 'Navy & Gold', preview: 'bg-[#1e3a5f]' },
   { name: 'emerald', label: 'Emerald', preview: 'bg-[#047857]' },
   { name: 'rose', label: 'Rose', preview: 'bg-[#be123c]' },
@@ -21,9 +22,9 @@ export const themes: { name: ThemeName; label: string; preview: string }[] = [
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeName>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('portfolio-theme') as ThemeName) || 'navy-gold';
+      return (localStorage.getItem('portfolio-theme') as ThemeName) || 'mono';
     }
-    return 'navy-gold';
+    return 'mono';
   });
 
   useEffect(() => {
