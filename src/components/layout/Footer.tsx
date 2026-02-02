@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Github, Linkedin, Mail, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useProfile } from '@/hooks/usePortfolioData';
 
@@ -6,46 +6,26 @@ export function Footer() {
   const { data: profile } = useProfile();
 
   return (
-    <footer className="border-t bg-muted/30">
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Brand */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">{profile?.name || 'Portfolio'}</h3>
-            <p className="text-sm text-muted-foreground max-w-xs">
+    <footer className="border-t border-border bg-background">
+      <div className="container py-16 md:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
+          {/* Brand Column */}
+          <div className="md:col-span-5 space-y-6">
+            <h3 className="text-2xl font-display font-bold tracking-tight">
+              {profile?.name || 'Portfolio'}
+            </h3>
+            <p className="text-muted-foreground max-w-sm leading-relaxed">
               {profile?.tagline || 'Finance professional showcasing projects and experience.'}
             </p>
-          </div>
-
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider">Quick Links</h4>
-            <nav className="flex flex-col space-y-2">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Home
-              </Link>
-              <Link to="/projects" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Projects
-              </Link>
-              <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                About
-              </Link>
-              <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Contact
-              </Link>
-            </nav>
-          </div>
-
-          {/* Social Links */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider">Connect</h4>
-            <div className="flex space-x-4">
+            
+            {/* Social Links */}
+            <div className="flex space-x-6 pt-4">
               {profile?.linkedin_url && (
                 <a
                   href={profile.linkedin_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Linkedin className="h-5 w-5" />
                 </a>
@@ -55,7 +35,7 @@ export function Footer() {
                   href={profile.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Github className="h-5 w-5" />
                 </a>
@@ -63,17 +43,71 @@ export function Footer() {
               {profile?.email && (
                 <a
                   href={`mailto:${profile.email}`}
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Mail className="h-5 w-5" />
                 </a>
               )}
             </div>
           </div>
+
+          {/* Navigation Column */}
+          <div className="md:col-span-3 md:col-start-7">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] mb-6">
+              Navigation
+            </h4>
+            <nav className="flex flex-col space-y-4">
+              {[
+                { to: '/', label: 'Home' },
+                { to: '/projects', label: 'Projects' },
+                { to: '/about', label: 'About' },
+                { to: '/contact', label: 'Contact' },
+              ].map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-muted-foreground hover:text-foreground transition-colors group flex items-center"
+                >
+                  {link.label}
+                  <ArrowUpRight className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Contact Column */}
+          <div className="md:col-span-3">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.2em] mb-6">
+              Get in Touch
+            </h4>
+            <div className="space-y-4">
+              {profile?.email && (
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {profile.email}
+                </a>
+              )}
+              <Link
+                to="/contact"
+                className="inline-flex items-center text-foreground font-medium group"
+              >
+                Send a Message
+                <ArrowUpRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} {profile?.name || 'Portfolio'}. All rights reserved.</p>
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} {profile?.name || 'Portfolio'}. All rights reserved.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Built with precision.
+          </p>
         </div>
       </div>
     </footer>
