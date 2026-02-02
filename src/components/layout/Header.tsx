@@ -2,16 +2,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/projects', label: 'Projects' },
   { href: '/about', label: 'About' },
-  { href: '/about#skills', label: 'Skills' },
-  { href: '/about#education', label: 'Education' },
-  { href: '/about#certifications', label: 'Certifications' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -20,57 +16,57 @@ export function Header() {
   const location = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2">
-          <span className="text-xl font-semibold tracking-tight">Portfolio</span>
+    <header className="sticky top-0 z-50 w-full bg-background border-b border-border">
+      <div className="container flex h-20 items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="flex items-center">
+          <span className="text-xl font-display font-bold tracking-tight uppercase">
+            Portfolio
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-12">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
               className={cn(
-                'text-sm font-medium transition-colors hover:text-primary',
+                'text-sm uppercase tracking-[0.15em] font-medium transition-colors hover:text-foreground',
                 location.pathname === link.href
-                  ? 'text-primary'
+                  ? 'text-foreground'
                   : 'text-muted-foreground'
               )}
             >
               {link.label}
             </Link>
           ))}
-          <ThemeSwitcher />
         </nav>
 
         {/* Mobile Menu Button */}
-        <div className="flex items-center gap-2 md:hidden">
-          <ThemeSwitcher />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
       </div>
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden border-t">
-          <nav className="container py-4 flex flex-col space-y-4">
+        <div className="md:hidden border-t border-border bg-background">
+          <nav className="container py-8 flex flex-col space-y-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMenuOpen(false)}
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-primary',
+                  'text-lg uppercase tracking-[0.15em] font-medium transition-colors hover:text-foreground',
                   location.pathname === link.href
-                    ? 'text-primary'
+                    ? 'text-foreground'
                     : 'text-muted-foreground'
                 )}
               >
