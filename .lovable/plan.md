@@ -1,105 +1,111 @@
 
+# Redesign Pages and Add Animations
 
-# Finance Student Portfolio Template
-
-A clean, minimal portfolio web app designed as a remixable template for finance students to showcase their work. Features a full CMS with admin dashboard for easy content management.
-
-## ✅ Implementation Status: COMPLETE
+## Overview
+Update the Projects, Project Detail, About, and Contact pages to match the minimal black-and-white editorial aesthetic already established in the homepage and header/footer. Additionally, install framer-motion for subtle page transitions and hover animations across all pages. Clean up unused color theme CSS variables from index.css.
 
 ---
 
-## Pages & Features
+## 1. Install framer-motion
 
-### 1. Home Page ✅
-- Hero section with name, tagline, and professional photo
-- Featured projects carousel highlighting best work
-- Quick bio summary with link to full About page
-- Skills/expertise highlights (e.g., "Valuation", "Python", "Financial Modeling")
-- Call-to-action buttons to view projects or get in touch
-
-### 2. Projects Gallery ✅
-- Grid layout displaying all portfolio projects
-- Filter by category (Financial Models, Case Studies, Code, Research)
-- Search functionality
-- Each project card shows: title, thumbnail, category tag, brief description
-- Click to view full project detail page
-
-### 3. Project Detail Page (Dynamic) ✅
-- Full project description and context
-- **Embedded content support:**
-  - Google Docs/Sheets viewer (iframe embeds)
-  - GitHub repository preview with README
-  - PDF/PowerPoint viewer
-  - Interactive dashboard embeds (Tableau, Jupyter, etc.)
-- Tags and related projects
-- External links to live projects or downloads
-
-### 4. About/Resume Page ✅
-- Professional bio and photo
-- Education history with institutions and degrees
-- Work experience timeline
-- Skills section (technical & soft skills)
-- Certifications and achievements
-- Downloadable resume (PDF upload)
-- Social/professional links (LinkedIn, GitHub, etc.)
-
-### 5. Contact Page ✅
-- Contact form (name, email, message)
-- Social media links
-- Optional: calendly embed for scheduling calls
-- Email display or obfuscated contact method
+Add `framer-motion` as a dependency for page transitions and element animations.
 
 ---
 
-## Admin Dashboard (CMS) ✅
+## 2. Clean Up index.css
 
-### Authentication ✅
-- Secure login for portfolio owner
-- Protected admin routes
-
-### Content Management ✅
-- **Projects Manager**: Add, edit, delete projects with rich text editor
-- **Embed Manager**: Easy input for Google Docs URLs, GitHub repos, or paste embed codes
-- **About/Resume Editor**: Update bio, experience, education, and upload resume PDF
-- **Messages**: View contact form submissions
-- **Site Settings**: Update name, tagline, social links, and theme colors
+Remove all unused color theme classes (`.theme-navy-gold`, `.theme-emerald`, `.theme-rose`, `.theme-purple`, `.theme-ocean`, `.theme-sunset`) since the project now uses only the monochrome design. Keep only `:root` / `.theme-mono` and `.dark`.
 
 ---
 
-## Database Schema ✅
+## 3. Create Animation Wrapper Components
 
-Tables created:
-- `profile` - Personal information
-- `projects` - Portfolio projects with embed support
-- `education` - Educational background
-- `experience` - Work history
-- `skills` - Skills with categories and proficiency
-- `certifications` - Certifications and credentials
-- `site_settings` - Site configuration
-- `contact_messages` - Contact form submissions
+**New file: `src/components/motion/PageTransition.tsx`**
+- A framer-motion wrapper that fades/slides content in when a page mounts
+- Used to wrap each page's content for smooth route transitions
 
-Storage bucket:
-- `portfolio` - For images and resume PDFs
+**New file: `src/components/motion/FadeIn.tsx`**
+- A reusable component that animates children into view (fade + slight upward slide)
+- Accepts optional `delay` and `direction` props
+- Used for staggered section reveals on all pages
 
 ---
 
-## Getting Started
+## 4. Redesign Projects Page (`src/pages/Projects.tsx`)
 
-1. **Sign up**: Go to `/auth` and create an account
-2. **Access admin**: Navigate to `/admin` after logging in
-3. **Update profile**: Add your name, bio, photo, and social links
-4. **Add projects**: Create portfolio projects with embeds
-5. **Add experience**: Add your work history
-6. **Add education**: Add your educational background
-7. **Add skills**: Add your technical and soft skills
-8. **Configure settings**: Customize site title and contact info
+- Wrap in `PageTransition`
+- Large editorial header with uppercase label + bold display heading
+- Search input with sharp borders matching the monochrome style
+- Category filters styled as minimal uppercase text buttons with underline active state
+- Project cards: no rounded corners, grayscale thumbnails with hover-to-color effect, uppercase category labels, clean typography
+- Staggered fade-in animation for project cards using `FadeIn`
 
 ---
 
-## Technical Stack
+## 5. Redesign Project Detail Page (`src/pages/ProjectDetail.tsx`)
 
-- **Frontend**: React + TypeScript + Tailwind CSS
-- **Backend**: Lovable Cloud (Supabase)
-- **Authentication**: Email/password
-- **Database**: PostgreSQL with RLS policies
-- **Storage**: File uploads for images and PDFs
+- Wrap in `PageTransition`
+- Full-width grayscale hero image with hover-to-color
+- Back link styled as minimal uppercase text with arrow
+- Large display title, uppercase category/tags
+- Description in clean serif-like body text
+- External links as sharp-cornered buttons with border
+- Embeds card with minimal styling, no rounded corners
+- Fade-in animations for each section
+
+---
+
+## 6. Redesign About Page (`src/pages/About.tsx`)
+
+- Wrap in `PageTransition`
+- Profile section: grayscale photo with sharp corners, large display name, uppercase label
+- Experience cards: borderless with horizontal rule separators, timeline-like left border accent
+- Education cards: similar minimal treatment
+- Skills: replace progress bars with horizontal bar charts using pure black fills
+- Certifications: clean list layout with uppercase issuer text
+- Each section animated with staggered `FadeIn`
+
+---
+
+## 7. Redesign Contact Page (`src/pages/Contact.tsx`)
+
+- Wrap in `PageTransition`
+- Editorial header with uppercase label
+- Form inputs with sharp borders (already 0 radius), minimal styling
+- Contact info links with underline hover effect
+- FadeIn animations for form and info sections
+
+---
+
+## 8. Update Layout for Page Transitions
+
+Wrap the `<main>` content in `src/components/layout/Layout.tsx` with `AnimatePresence` from framer-motion to enable exit animations between routes.
+
+---
+
+## Technical Details
+
+### Files Created:
+- `src/components/motion/PageTransition.tsx` -- motion.div wrapper with fade+slide
+- `src/components/motion/FadeIn.tsx` -- reusable reveal animation component
+
+### Files Modified:
+- `src/index.css` -- remove 6 unused theme blocks (~200 lines)
+- `src/pages/Projects.tsx` -- full redesign with monochrome style + animations
+- `src/pages/ProjectDetail.tsx` -- full redesign with monochrome style + animations
+- `src/pages/About.tsx` -- full redesign with monochrome style + animations
+- `src/pages/Contact.tsx` -- full redesign with monochrome style + animations
+- `src/components/layout/Layout.tsx` -- add AnimatePresence wrapper
+
+### Dependencies Added:
+- `framer-motion` (latest)
+
+### Design Principles Applied:
+- Zero border radius throughout (sharp corners)
+- Grayscale images with hover-to-color transitions
+- Uppercase tracking on labels and category text
+- High-contrast black/white palette only
+- Large display typography using Sora font
+- Minimal shadows and borders
+- Staggered entrance animations for content sections
+- Smooth page transitions on route changes
