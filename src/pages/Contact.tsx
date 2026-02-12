@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Send, Mail, Linkedin, Github, Calendar } from 'lucide-react';
+import { Send, Mail, Linkedin, Github, Calendar, ArrowUpRight } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
+import { PageTransition } from '@/components/motion/PageTransition';
+import { FadeIn } from '@/components/motion/FadeIn';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -63,171 +64,181 @@ const Contact = () => {
     }
   };
 
+  const contactLinks = [
+    ...(profile?.email || settings?.contact_email
+      ? [{
+          icon: Mail,
+          label: 'Email',
+          value: profile?.email || settings?.contact_email,
+          href: `mailto:${profile?.email || settings?.contact_email}`,
+        }]
+      : []),
+    ...(profile?.linkedin_url
+      ? [{
+          icon: Linkedin,
+          label: 'LinkedIn',
+          value: 'Connect with me',
+          href: profile.linkedin_url,
+        }]
+      : []),
+    ...(profile?.github_url
+      ? [{
+          icon: Github,
+          label: 'GitHub',
+          value: 'View my code',
+          href: profile.github_url,
+        }]
+      : []),
+    ...(settings?.calendly_url
+      ? [{
+          icon: Calendar,
+          label: 'Schedule',
+          value: 'Book a time to chat',
+          href: settings.calendly_url,
+        }]
+      : []),
+  ];
+
   return (
     <Layout>
-      <div className="py-16 md:py-24">
-        <div className="container max-w-4xl">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Get in Touch</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Have a question or want to work together? Feel free to reach out.
-            </p>
-          </div>
+      <PageTransition>
+        <div className="py-20 md:py-32">
+          <div className="container max-w-4xl">
+            {/* Editorial Header */}
+            <FadeIn>
+              <div className="mb-16">
+                <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground mb-4">
+                  Connect
+                </p>
+                <h1 className="text-5xl md:text-7xl font-bold font-display leading-[0.9] mb-6">
+                  Get in Touch
+                </h1>
+                <div className="w-16 h-px bg-foreground" />
+              </div>
+            </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Contact Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Send a Message</CardTitle>
-                <CardDescription>Fill out the form and I'll get back to you.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="your@email.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Message</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Your message..."
-                              className="min-h-[150px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
-                      {isSubmitting ? (
-                        'Sending...'
-                      ) : (
-                        <>
-                          <Send className="mr-2 h-4 w-4" />
-                          Send Message
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+              {/* Contact Form */}
+              <FadeIn delay={0.1}>
+                <div>
+                  <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+                    Send a Message
+                  </h2>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs uppercase tracking-[0.15em]">Name</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Your name"
+                                className="border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs uppercase tracking-[0.15em]">Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="email"
+                                placeholder="your@email.com"
+                                className="border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs uppercase tracking-[0.15em]">Message</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Your message..."
+                                className="min-h-[150px] border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0 resize-none"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="submit" className="w-full uppercase tracking-wider text-xs" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                          'Sending...'
+                        ) : (
+                          <>
+                            <Send className="mr-2 h-3 w-3" />
+                            Send Message
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                </div>
+              </FadeIn>
 
-            {/* Contact Info */}
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Other Ways to Connect</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {(profile?.email || settings?.contact_email) && (
-                    <a
-                      href={`mailto:${profile?.email || settings?.contact_email}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <Mail className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">Email</p>
-                        <p className="text-sm text-muted-foreground">
-                          {profile?.email || settings?.contact_email}
-                        </p>
-                      </div>
-                    </a>
-                  )}
-                  {profile?.linkedin_url && (
-                    <a
-                      href={profile.linkedin_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <Linkedin className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">LinkedIn</p>
-                        <p className="text-sm text-muted-foreground">Connect with me</p>
-                      </div>
-                    </a>
-                  )}
-                  {profile?.github_url && (
-                    <a
-                      href={profile.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <Github className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">GitHub</p>
-                        <p className="text-sm text-muted-foreground">View my code</p>
-                      </div>
-                    </a>
-                  )}
-                  {settings?.calendly_url && (
-                    <a
-                      href={settings.calendly_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <Calendar className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">Schedule a Call</p>
-                        <p className="text-sm text-muted-foreground">Book a time to chat</p>
-                      </div>
-                    </a>
-                  )}
-                </CardContent>
-              </Card>
-
-              {settings?.calendly_url && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Schedule a Meeting</CardTitle>
-                    <CardDescription>Pick a time that works for you</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button asChild className="w-full">
-                      <a href={settings.calendly_url} target="_blank" rel="noopener noreferrer">
-                        <Calendar className="mr-2 h-4 w-4" />
-                        Open Calendar
+              {/* Contact Links */}
+              <FadeIn delay={0.2}>
+                <div>
+                  <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+                    Other Ways to Connect
+                  </h2>
+                  <div className="space-y-0">
+                    {contactLinks.map((link) => (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between py-5 border-t border-border group transition-colors hover:bg-secondary/50"
+                      >
+                        <div className="flex items-center gap-4">
+                          <link.icon className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm font-medium">{link.label}</p>
+                            <p className="text-xs text-muted-foreground">{link.value}</p>
+                          </div>
+                        </div>
+                        <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                       </a>
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
+                    ))}
+                  </div>
+
+                  {settings?.calendly_url && (
+                    <div className="mt-10 pt-10 border-t border-border">
+                      <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
+                        Schedule a Meeting
+                      </h2>
+                      <Button asChild className="w-full uppercase tracking-wider text-xs">
+                        <a href={settings.calendly_url} target="_blank" rel="noopener noreferrer">
+                          <Calendar className="mr-2 h-3 w-3" />
+                          Open Calendar
+                        </a>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </FadeIn>
             </div>
           </div>
         </div>
-      </div>
+      </PageTransition>
     </Layout>
   );
 };
