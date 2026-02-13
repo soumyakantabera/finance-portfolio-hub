@@ -16,6 +16,7 @@ import {
   Palette,
   BadgeCheck,
   Github,
+  FileJson,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -23,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/content', label: 'Content', icon: FileJson },
   { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
   { href: '/admin/profile', label: 'Profile', icon: User },
   { href: '/admin/experience', label: 'Experience', icon: Briefcase },
