@@ -20,6 +20,10 @@ import AdminProfile from "./pages/admin/AdminProfile";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { CommandPalette } from "./components/command/CommandPalette";
+import { DesignSystemToggle } from "./components/theme/DesignSystemToggle";
+import { BackToTop } from "./components/ui/BackToTop";
+import { ReadingProgress } from "./components/ui/ReadingProgress";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +32,10 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <CommandPalette />
+      <DesignSystemToggle />
+      <BackToTop />
+      <ReadingProgress />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />

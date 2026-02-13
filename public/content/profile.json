@@ -1,0 +1,11 @@
+{
+  "id": "1",
+  "name": "Finance Professional",
+  "tagline": "Financial Analyst & Portfolio Manager",
+  "bio": "Experienced financial professional specializing in portfolio management, risk analysis, and investment strategy. Passionate about leveraging data-driven insights to optimize financial performance.",
+  "photo_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+  "resume_url": "/resume.pdf",
+  "linkedin_url": "https://linkedin.com/in/example",
+  "github_url": "https://github.com/example",
+  "email": "contact@example.com"
+}

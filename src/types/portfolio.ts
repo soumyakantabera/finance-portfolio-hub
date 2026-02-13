@@ -28,6 +28,8 @@ export interface Project {
   is_featured: boolean;
   display_order: number;
   tags: string[];
+  images?: string[];
+  content?: string;
   created_at: string;
   updated_at: string;
 }
