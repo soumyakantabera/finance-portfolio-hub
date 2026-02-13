@@ -7,7 +7,7 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useProjects } from '@/hooks/useData';
+import { useProjects } from '@/hooks/usePortfolioData';
 
 const categories = ['All', 'Financial Models', 'Case Studies', 'Code', 'Research'];
 

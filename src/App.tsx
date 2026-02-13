@@ -20,10 +20,6 @@ import AdminProfile from "./pages/admin/AdminProfile";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { CommandPalette } from "./components/command/CommandPalette";
-import { DesignSystemToggle } from "./components/theme/DesignSystemToggle";
-import { BackToTop } from "./components/ui/BackToTop";
-import { ReadingProgress } from "./components/ui/ReadingProgress";
 
 const queryClient = new QueryClient();
 
@@ -33,8 +29,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <CommandPalette />
-        <ReadingProgress />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/projects" element={<Projects />} />
@@ -54,8 +48,6 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-      <DesignSystemToggle />
-      <BackToTop />
     </TooltipProvider>
   </QueryClientProvider>
 );
