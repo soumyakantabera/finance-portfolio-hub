@@ -15,7 +15,7 @@ const categories = ['All', 'Financial Models', 'Case Studies', 'Code', 'Research
 const Projects = () => {
   const { data: dbProjects, isLoading: dbLoading } = useProjects();
   const { data: staticProjects, isLoading: staticLoading } = useStaticProjects();
-  const isLoading = dbLoading && staticLoading;
+  const isLoading = dbLoading || staticLoading;
   const projects = (dbProjects && dbProjects.length > 0) ? dbProjects : staticProjects;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');

@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function FeaturedProjects() {
   const { data: dbProjects, isLoading: dbLoading } = useFeaturedProjects();
   const { data: staticProjects, isLoading: staticLoading } = useStaticFeaturedProjects();
-  const isLoading = dbLoading && staticLoading;
+  const isLoading = dbLoading || staticLoading;
   const projects = (dbProjects && dbProjects.length > 0) ? dbProjects : staticProjects;
 
   if (isLoading) {

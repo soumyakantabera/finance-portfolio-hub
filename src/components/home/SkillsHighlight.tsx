@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function SkillsHighlight() {
   const { data: dbSkills, isLoading: dbLoading } = useSkills();
   const { data: staticSkillsData, isLoading: staticLoading } = useStaticSkills();
-  const isLoading = dbLoading && staticLoading;
+  const isLoading = dbLoading || staticLoading;
 
   // Convert static skills data to flat array format for compatibility
   const staticSkills = staticSkillsData?.categories.flatMap((cat) =>

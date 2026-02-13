@@ -173,7 +173,7 @@ const ProjectDetail = () => {
                       className="w-full border-0"
                       style={{ height: '600px' }}
                       title={project.title}
-                      sandbox="allow-scripts allow-same-origin allow-popups"
+                      sandbox="allow-scripts allow-popups"
                     />
                   </div>
                 </div>

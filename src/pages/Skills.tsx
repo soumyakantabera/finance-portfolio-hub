@@ -66,7 +66,7 @@ const Skills = () => {
 
   // Prepare radar chart data - average proficiency per category
   const radarData = categories.map((cat) => ({
-    category: cat.name.split(' ').slice(0, 2).join(' '),
+    category: cat.name.length > 20 ? cat.name.slice(0, 18) + '…' : cat.name,
     proficiency: Math.round(
       cat.skills.reduce((sum, s) => sum + s.proficiency, 0) / cat.skills.length
     ),
