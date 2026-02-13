@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Skills from "./pages/Skills";
+import EnhancedSkills from "./pages/EnhancedSkills";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
@@ -22,6 +23,7 @@ import AdminProfile from "./pages/admin/AdminProfile";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminCustomization from "./pages/admin/AdminCustomization";
+import AdminGitHub from "./pages/admin/AdminGitHub";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -37,7 +39,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
-            <Route path="/skills" element={<Skills />} />
+            <Route path="/skills" element={<EnhancedSkills />} />
+            <Route path="/skills/original" element={<Skills />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
@@ -51,6 +54,7 @@ const App = () => (
             <Route path="/admin/messages" element={<ProtectedRoute><AdminMessages /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
             <Route path="/admin/customization" element={<ProtectedRoute><AdminCustomization /></ProtectedRoute>} />
+            <Route path="/admin/github" element={<ProtectedRoute><AdminGitHub /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

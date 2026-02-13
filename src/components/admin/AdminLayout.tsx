@@ -15,6 +15,7 @@ import {
   Home,
   Palette,
   BadgeCheck,
+  Github,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -29,6 +30,7 @@ const navItems = [
   { href: '/admin/skills', label: 'Skills', icon: Award },
   { href: '/admin/certifications', label: 'Certifications', icon: BadgeCheck },
   { href: '/admin/messages', label: 'Messages', icon: Mail },
+  { href: '/admin/github', label: 'GitHub', icon: Github },
   { href: '/admin/customization', label: 'Customization', icon: Palette },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
