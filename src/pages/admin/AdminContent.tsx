@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,11 +23,11 @@ const AdminContent = () => {
   const [activeTab, setActiveTab] = useState('edit');
 
   // Initialize edited content when data loads
-  useState(() => {
+  useEffect(() => {
     if (content && !editedContent) {
       setEditedContent(JSON.stringify(content, null, 2));
     }
-  });
+  }, [content, editedContent]);
 
   const handlePreview = () => {
     try {

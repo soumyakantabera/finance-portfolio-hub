@@ -1,8 +1,27 @@
-# Welcome to your Lovable project
+# Finance Portfolio Hub
+
+A dynamic, modern finance portfolio website with an integrated admin panel for content management.
+
+## 🌟 Key Features
+
+- **Dynamic Content Management**: Update your portfolio without touching code
+- **Enhanced Skills Section**: Skills ranked by usage with automatic citation tracking
+- **GitHub Integration**: DB-less architecture with direct GitHub API commits
+- **Admin Panel**: Secure password-protected admin interface
+- **Minimalist Design**: Clean, professional aesthetic throughout
+
+## 🚀 Live Demo
+
+**URL**: https://soumyakantabera.github.io/finance-portfolio-hub/
+
+## 📚 Documentation
+
+- **[Admin Guide](ADMIN_GUIDE.md)**: Complete guide to using the admin panel
+- **[Deployment Guide](DEPLOYMENT.md)**: GitHub Pages deployment information
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Lovable Project**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
 ## How can I edit this code?
 
