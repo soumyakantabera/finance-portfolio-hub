@@ -7,15 +7,13 @@ import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
+import Skills from "./pages/Skills";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProjects from "./pages/admin/AdminProjects";
-import AdminBlog from "./pages/admin/AdminBlog";
 import AdminSkills from "./pages/admin/AdminSkills";
 import AdminExperience from "./pages/admin/AdminExperience";
 import AdminEducation from "./pages/admin/AdminEducation";
@@ -39,14 +37,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/skills" element={<Skills />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/projects" element={<ProtectedRoute><AdminProjects /></ProtectedRoute>} />
-            <Route path="/admin/blog" element={<ProtectedRoute><AdminBlog /></ProtectedRoute>} />
             <Route path="/admin/skills" element={<ProtectedRoute><AdminSkills /></ProtectedRoute>} />
             <Route path="/admin/experience" element={<ProtectedRoute><AdminExperience /></ProtectedRoute>} />
             <Route path="/admin/education" element={<ProtectedRoute><AdminEducation /></ProtectedRoute>} />

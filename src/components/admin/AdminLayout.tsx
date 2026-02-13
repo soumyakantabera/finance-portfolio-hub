@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -13,19 +13,16 @@ import {
   Menu,
   X,
   Home,
-  FileText,
   Palette,
   BadgeCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
-  { href: '/admin/blog', label: 'Blog', icon: FileText },
   { href: '/admin/profile', label: 'Profile', icon: User },
   { href: '/admin/experience', label: 'Experience', icon: Briefcase },
   { href: '/admin/education', label: 'Education', icon: GraduationCap },
@@ -45,16 +42,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUserEmail(user?.email ?? null);
-    });
-  }, []);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    localStorage.removeItem('admin_authenticated');
+    localStorage.removeItem('admin_session_time');
     toast({ title: 'Logged out', description: 'See you next time!' });
     navigate('/');
   };
@@ -120,7 +111,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </Link>
               </Button>
               <div className="px-3 py-2 text-xs text-muted-foreground truncate">
-                {userEmail}
+                Admin
               </div>
               <Button
                 variant="ghost"
