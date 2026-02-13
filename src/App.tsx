@@ -24,7 +24,7 @@ import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminCustomization from "./pages/admin/AdminCustomization";
 import AdminGitHub from "./pages/admin/AdminGitHub";
-import AdminContent from "./pages/admin/AdminContent";
+
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -46,7 +46,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/content" element={<ProtectedRoute><AdminContent /></ProtectedRoute>} />
+
             <Route path="/admin/projects" element={<ProtectedRoute><AdminProjects /></ProtectedRoute>} />
             <Route path="/admin/skills" element={<ProtectedRoute><AdminSkills /></ProtectedRoute>} />
             <Route path="/admin/experience" element={<ProtectedRoute><AdminExperience /></ProtectedRoute>} />
