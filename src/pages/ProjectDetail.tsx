@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useProject } from '@/hooks/usePortfolioData';
+import { useProject } from '@/hooks/useData';
 import { UniversalEmbed } from '@/components/embed/UniversalEmbed';
 import { ImageGallery } from '@/components/gallery/ImageGallery';
 

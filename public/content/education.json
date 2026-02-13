@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "institution": "Harvard Business School",
+    "degree": "MBA",
+    "field_of_study": "Finance",
+    "start_date": "2018-09-01",
+    "end_date": "2020-05-01",
+    "description": "Specialized in corporate finance and investment management",
+    "display_order": 1,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "institution": "Massachusetts Institute of Technology",
+    "degree": "Bachelor of Science",
+    "field_of_study": "Economics",
+    "start_date": "2014-09-01",
+    "end_date": "2018-05-01",
+    "description": "Focus on econometrics and quantitative analysis",
+    "display_order": 2,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]

@@ -32,11 +32,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <CommandPalette />
-      <DesignSystemToggle />
-      <BackToTop />
-      <ReadingProgress />
       <BrowserRouter>
+        <CommandPalette />
+        <ReadingProgress />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/projects" element={<Projects />} />
@@ -56,6 +54,8 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      <DesignSystemToggle />
+      <BackToTop />
     </TooltipProvider>
   </QueryClientProvider>
 );
