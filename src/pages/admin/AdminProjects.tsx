@@ -42,7 +42,9 @@ const projectSchema = z.object({
   github_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_docs_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_sheets_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  google_slides_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   pdf_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  video_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   external_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   embed_code: z.string().optional(),
   tags: z.string().optional(),
@@ -71,7 +73,9 @@ const AdminProjects = () => {
       github_url: '',
       google_docs_url: '',
       google_sheets_url: '',
+      google_slides_url: '',
       pdf_url: '',
+      video_url: '',
       external_url: '',
       embed_code: '',
       tags: '',
@@ -90,7 +94,9 @@ const AdminProjects = () => {
         github_url: data.github_url || null,
         google_docs_url: data.google_docs_url || null,
         google_sheets_url: data.google_sheets_url || null,
+        google_slides_url: data.google_slides_url || null,
         pdf_url: data.pdf_url || null,
+        video_url: data.video_url || null,
         external_url: data.external_url || null,
         embed_code: data.embed_code || null,
         tags: data.tags ? data.tags.split(',').map((t) => t.trim()) : [],
@@ -158,7 +164,9 @@ const AdminProjects = () => {
       github_url: project.github_url || '',
       google_docs_url: project.google_docs_url || '',
       google_sheets_url: project.google_sheets_url || '',
+      google_slides_url: (project as any).google_slides_url || '',
       pdf_url: project.pdf_url || '',
+      video_url: (project as any).video_url || '',
       external_url: project.external_url || '',
       embed_code: project.embed_code || '',
       tags: project.tags?.join(', ') || '',
@@ -366,6 +374,36 @@ const AdminProjects = () => {
                           <FormLabel>Google Sheets URL</FormLabel>
                           <FormControl>
                             <Input placeholder="https://sheets.google.com/..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="google_slides_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Google Slides URL</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://docs.google.com/presentation/..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="video_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Video URL (YouTube or direct)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://youtube.com/watch?v=..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

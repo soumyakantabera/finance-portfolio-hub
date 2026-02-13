@@ -99,5 +99,45 @@ export interface ContactMessage {
   created_at: string;
 }
 
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string | null;
+  featured_image: string | null;
+  image_filter: ImageFilter | null;
+  category: string;
+  tags: string[];
+  status: 'draft' | 'published';
+  meta_title: string | null;
+  meta_description: string | null;
+  meta_keywords: string | null;
+  video_url: string | null;
+  gallery_images: string[];
+  google_docs_url: string | null;
+  google_sheets_url: string | null;
+  google_slides_url: string | null;
+  pdf_url: string | null;
+  embed_code: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ImageFilter = 'none' | 'grayscale' | 'monochrome' | 'retro' | 'warm' | 'cool' | 'high-contrast';
+
+export interface PageCustomization {
+  id: string;
+  page_path: string;
+  primary_color: string | null;
+  secondary_color: string | null;
+  accent_color: string | null;
+  heading_font: string | null;
+  body_font: string | null;
+  navbar_color: string | null;
+  navbar_font: string | null;
+  hidden_nav_links: string[];
+}
+
 export type ProjectCategory = 'Financial Models' | 'Case Studies' | 'Code' | 'Research';
 export type SkillCategory = 'Technical' | 'Soft Skills' | 'Tools' | 'Languages';

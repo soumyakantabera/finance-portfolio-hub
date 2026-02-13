@@ -19,6 +19,7 @@ const settingsSchema = z.object({
   tagline: z.string().optional(),
   contact_email: z.string().email('Invalid email').optional().or(z.literal('')),
   calendly_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  analytics_id: z.string().optional(),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -36,6 +37,7 @@ const AdminSettings = () => {
       tagline: settings?.tagline || '',
       contact_email: settings?.contact_email || '',
       calendly_url: settings?.calendly_url || '',
+      analytics_id: '',
     },
   });
 
@@ -150,6 +152,20 @@ const AdminSettings = () => {
                       <FormLabel>Calendly URL (optional)</FormLabel>
                       <FormControl>
                         <Input placeholder="https://calendly.com/yourname" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="analytics_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Google Analytics ID (optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="G-XXXXXXXXXX" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

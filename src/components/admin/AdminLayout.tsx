@@ -13,23 +13,26 @@ import {
   Menu,
   X,
   Home,
+  FileText,
+  Palette,
+  BadgeCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-import { BadgeCheck } from 'lucide-react';
-
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/projects', label: 'Projects', icon: FolderKanban },
+  { href: '/admin/blog', label: 'Blog', icon: FileText },
   { href: '/admin/profile', label: 'Profile', icon: User },
   { href: '/admin/experience', label: 'Experience', icon: Briefcase },
   { href: '/admin/education', label: 'Education', icon: GraduationCap },
   { href: '/admin/skills', label: 'Skills', icon: Award },
   { href: '/admin/certifications', label: 'Certifications', icon: BadgeCheck },
   { href: '/admin/messages', label: 'Messages', icon: Mail },
+  { href: '/admin/customization', label: 'Customization', icon: Palette },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
