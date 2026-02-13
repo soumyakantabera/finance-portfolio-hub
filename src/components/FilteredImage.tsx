@@ -14,7 +14,7 @@ const filterClasses: Record<string, string> = {
   monochrome: 'grayscale contrast-125',
   retro: 'sepia',
   warm: 'saturate-110 brightness-105',
-  cool: 'saturate-90 brightness-105 hue-rotate-15',
+  cool: 'saturate-90 brightness-105 hue-rotate-[-15deg]',
   'high-contrast': 'contrast-125 saturate-110',
 };
 

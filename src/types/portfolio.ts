@@ -22,7 +22,9 @@ export interface Project {
   github_url: string | null;
   google_docs_url: string | null;
   google_sheets_url: string | null;
+  google_slides_url: string | null;
   pdf_url: string | null;
+  video_url: string | null;
   external_url: string | null;
   embed_code: string | null;
   is_featured: boolean;

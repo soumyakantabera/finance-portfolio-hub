@@ -37,7 +37,7 @@ const AdminSettings = () => {
       tagline: settings?.tagline || '',
       contact_email: settings?.contact_email || '',
       calendly_url: settings?.calendly_url || '',
-      analytics_id: '',
+      analytics_id: localStorage.getItem('portfolio_analytics_id') || '',
     },
   });
 
@@ -55,6 +55,12 @@ const AdminSettings = () => {
         .eq('id', settings?.id);
 
       if (error) throw error;
+
+      if (data.analytics_id) {
+        localStorage.setItem('portfolio_analytics_id', data.analytics_id);
+      } else {
+        localStorage.removeItem('portfolio_analytics_id');
+      }
 
       await queryClient.invalidateQueries({ queryKey: ['site-settings'] });
       toast({ title: 'Settings updated', description: 'Your changes have been saved.' });
