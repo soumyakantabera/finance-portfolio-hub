@@ -7,6 +7,7 @@ export interface LightboxProps {
   initialIndex?: number;
   isOpen: boolean;
   onClose: () => void;
+  altTexts?: string[];
 }
 
 export const Lightbox = ({
@@ -14,6 +15,7 @@ export const Lightbox = ({
   initialIndex = 0,
   isOpen,
   onClose,
+  altTexts,
 }: LightboxProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
@@ -85,7 +87,7 @@ export const Lightbox = ({
       >
         <img
           src={images[currentIndex]}
-          alt={`Image ${currentIndex + 1}`}
+          alt={altTexts?.[currentIndex] || `Gallery image ${currentIndex + 1}`}
           className="max-w-full max-h-[90vh] object-contain"
         />
       </div>

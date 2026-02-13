@@ -1,11 +1,12 @@
 import type { Profile, Project, Education, Experience, Skill, Certification, SiteSettings } from '@/types/portfolio';
+import { config } from './config';
 
 /**
  * Utility to load static JSON data for GitHub Pages deployment
  * This replaces Supabase queries with static file loading
  */
 
-const BASE_PATH = '/content';
+const BASE_PATH = config.basePath ? `${config.basePath}/content` : '/content';
 
 export async function loadProjects(): Promise<Project[]> {
   try {

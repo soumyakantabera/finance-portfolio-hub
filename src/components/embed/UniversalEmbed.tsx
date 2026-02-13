@@ -207,12 +207,14 @@ export const UniversalEmbed = ({
             className="w-full border border-border"
             style={{ height }}
             onLoad={handleLoad}
-            sandbox="allow-scripts allow-same-origin"
+            sandbox="allow-scripts"
           />
         );
 
       case 'custom':
         if (!embedCode) return null;
+        // WARNING: Custom embed code should be sanitized before use
+        // Only use embed codes from trusted sources
         return (
           <div
             className="w-full"

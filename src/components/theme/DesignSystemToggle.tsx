@@ -88,7 +88,7 @@ export const DesignSystemToggle = () => {
     }
 
     // Apply navbar style class
-    root.classList.remove('navbar-top-fixed', 'navbar-sidebar', 'navbar-burger');
+    root.classList.remove('navbar-top-fixed', 'navbar-sidebar-minimal', 'navbar-hidden-burger');
     root.classList.add(`navbar-${theme.navbarStyle}`);
   };
 

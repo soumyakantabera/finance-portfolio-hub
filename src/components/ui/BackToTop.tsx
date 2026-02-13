@@ -32,6 +32,7 @@ export const BackToTop = () => {
           variant="outline"
           size="icon"
           onClick={scrollToTop}
+          aria-label="Scroll to top"
           className="fixed bottom-6 left-6 z-40 h-12 w-12 rounded-full shadow-lg opacity-0 animate-in fade-in slide-in-from-bottom-4"
         >
           <ArrowUp className="h-5 w-5" />
