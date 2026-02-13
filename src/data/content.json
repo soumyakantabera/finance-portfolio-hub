@@ -17,7 +17,7 @@
       "description": "Developed and backtested a mean-reversion algorithmic trading strategy using Python and historical market data. The project involved data cleaning, statistical analysis, and performance evaluation.",
       "displayMode": "journal-like",
       "content": "This project focused on creating an automated trading system. I utilized Python's `pandas` and `numpy` libraries for data manipulation, and `matplotlib` for visualization. The strategy was tested against 5 years of historical stock data, demonstrating a Sharpe ratio of 1.2. Key skills: Python, Pandas, NumPy, Algorithmic Trading, Statistical Analysis.",
-      "skillsUsed": ["Python", "Pandas", "NumPy", "Algorithmic Trading", "Statistical Analysis"]
+      "skillsUsed": ["Python", "Pandas", "NumPy", "Algorithmic Trading", "Statistical Analysis", "Quantitative Analysis", "Backtesting", "Financial Modeling"]
     },
     {
       "id": "proj2",
@@ -25,7 +25,7 @@
       "description": "Designed and implemented a real-time interactive financial dashboard for portfolio performance tracking and risk visualization using React and D3.js.",
       "displayMode": "iframe",
       "iframeUrl": "https://example.com/interactive-dashboard",
-      "skillsUsed": ["React", "JavaScript", "D3.js", "Data Visualization", "Portfolio Management"]
+      "skillsUsed": ["React", "JavaScript", "D3.js", "Data Visualization", "Portfolio Management", "TypeScript", "Node.js"]
     },
     {
       "id": "proj3",
@@ -34,7 +34,7 @@
       "displayMode": "embedding-only",
       "embeddingType": "image",
       "embeddingSrc": "/assets/credit_risk_model_overview.png",
-      "skillsUsed": ["Python", "Machine Learning", "Scikit-learn", "Risk Management", "Flask"]
+      "skillsUsed": ["Python", "Machine Learning", "Scikit-learn", "Risk Management", "Flask", "Credit Analysis", "XGBoost", "Random Forest"]
     }
   ],
   "skills": [
@@ -156,7 +156,7 @@
       "company": "Global Investment Bank",
       "duration": "Jan 2023 - Present",
       "description": "Developed and maintained quantitative models for equity derivatives pricing and risk management. Implemented Python-based tools for portfolio optimization and backtesting. Collaborated with traders to integrate models into daily workflows.",
-      "skillsUsed": ["Python", "Financial Modeling", "Risk Management", "Algorithmic Trading", "Statistical Analysis", "Valuation"]
+      "skillsUsed": ["Python", "Financial Modeling", "Risk Management", "Algorithmic Trading", "Statistical Analysis", "Valuation", "VaR (Value at Risk)", "Monte Carlo Simulation", "Bloomberg Terminal", "SQL"]
     },
     {
       "id": "exp2",
@@ -164,7 +164,7 @@
       "company": "FinTech Startup",
       "duration": "Jun 2021 - Dec 2022",
       "description": "Built machine learning models for fraud detection and customer segmentation. Utilized SQL for data extraction and Python with Pandas for data cleaning and feature engineering. Created interactive dashboards using JavaScript and D3.js.",
-      "skillsUsed": ["Python", "Machine Learning", "Pandas", "SQL", "JavaScript", "D3.js", "Data Visualization"]
+      "skillsUsed": ["Python", "Machine Learning", "Pandas", "SQL", "JavaScript", "D3.js", "Data Visualization", "AWS", "PostgreSQL", "TensorFlow"]
     }
   ],
   "education": [
@@ -174,7 +174,7 @@
       "institution": "University of Finance",
       "year": "2021",
       "description": "Specialized in quantitative finance, stochastic calculus, and derivative pricing. Master's thesis on 'Volatility Modeling using GARCH processes'.",
-      "skillsUsed": ["Financial Modeling", "Statistical Analysis", "Python"]
+      "skillsUsed": ["Financial Modeling", "Statistical Analysis", "Python", "R", "MATLAB", "Derivatives", "Options Trading"]
     },
     {
       "id": "edu2",
@@ -182,7 +182,7 @@
       "institution": "Tech University",
       "year": "2019",
       "description": "Focused on algorithms, data structures, and software development. Developed several projects using Python and Java.",
-      "skillsUsed": ["Python", "Java", "Algorithms"]
+      "skillsUsed": ["Python", "Java", "Algorithms", "Data Structures", "C++", "SQL"]
     }
   ],
   "certifications": [
@@ -192,7 +192,7 @@
       "issuer": "CFA Institute",
       "year": "2022",
       "description": "Demonstrated foundational knowledge in investment tools, ethical and professional standards, and investment vehicles.",
-      "skillsUsed": ["Financial Modeling", "Valuation", "Portfolio Management"]
+      "skillsUsed": ["Financial Modeling", "Valuation", "Portfolio Management", "Equity Research", "Fixed Income", "Financial Accounting"]
     },
     {
       "id": "cert2",
@@ -200,7 +200,7 @@
       "issuer": "Amazon Web Services",
       "year": "2023",
       "description": "Validated foundational understanding of AWS Cloud concepts, services, security, architecture, pricing, and support.",
-      "skillsUsed": ["Cloud Computing", "AWS"]
+      "skillsUsed": ["Cloud Computing", "AWS", "EC2", "S3", "Lambda"]
     }
   ]
 }
