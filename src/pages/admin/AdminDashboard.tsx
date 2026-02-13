@@ -1,4 +1,4 @@
-import { FolderKanban, User, Briefcase, Mail, Eye } from 'lucide-react';
+import { FolderKanban, User, Briefcase, Mail, Eye, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -98,11 +98,17 @@ const AdminDashboard = () => {
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>Common tasks to manage your portfolio</CardDescription>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Button asChild variant="outline" className="h-auto py-4">
               <Link to="/admin/projects" className="flex flex-col items-center gap-2">
                 <FolderKanban className="h-6 w-6" />
                 <span>Add New Project</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="h-auto py-4">
+              <Link to="/admin/blog" className="flex flex-col items-center gap-2">
+                <FileText className="h-6 w-6" />
+                <span>New Blog Post</span>
               </Link>
             </Button>
             <Button asChild variant="outline" className="h-auto py-4">
