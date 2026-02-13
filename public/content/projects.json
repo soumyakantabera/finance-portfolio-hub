@@ -1,0 +1,45 @@
+[
+  {
+    "id": "1",
+    "title": "Financial Model Dashboard",
+    "description": "Comprehensive financial modeling tool for portfolio analysis and risk assessment. Built with advanced Excel techniques and custom VBA scripts.",
+    "short_description": "Portfolio analysis and risk assessment dashboard",
+    "category": "Financial Models",
+    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
+    "github_url": null,
+    "google_docs_url": null,
+    "google_sheets_url": "https://docs.google.com/spreadsheets/d/1example/edit",
+    "pdf_url": null,
+    "external_url": null,
+    "embed_code": null,
+    "is_featured": true,
+    "display_order": 1,
+    "tags": ["Excel", "VBA", "Financial Modeling", "Risk Analysis"],
+    "images": [
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=800&fit=crop"
+    ],
+    "content": "## Overview\n\nThis financial model dashboard provides comprehensive analysis tools...\n\n## Key Features\n\n- Real-time portfolio tracking\n- Risk assessment metrics\n- Performance analytics"
+  },
+  {
+    "id": "2",
+    "title": "Investment Research Paper",
+    "description": "In-depth analysis of emerging market trends and investment opportunities in the technology sector.",
+    "short_description": "Emerging market tech sector analysis",
+    "category": "Research",
+    "thumbnail_url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop",
+    "github_url": null,
+    "google_docs_url": "https://docs.google.com/document/d/1example/edit",
+    "google_sheets_url": null,
+    "pdf_url": "https://example.com/research.pdf",
+    "external_url": null,
+    "embed_code": null,
+    "is_featured": true,
+    "display_order": 2,
+    "tags": ["Research", "Market Analysis", "Technology", "Emerging Markets"],
+    "images": [
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=800&fit=crop"
+    ],
+    "content": "## Executive Summary\n\nThis research paper examines emerging trends..."
+  }
+]

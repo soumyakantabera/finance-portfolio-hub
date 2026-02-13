@@ -1,0 +1,41 @@
+{
+  "siteTitle": "Finance Portfolio Hub",
+  "tagline": "Professional Portfolio & Analytics",
+  "theme": {
+    "currentPalette": "nordic-light",
+    "currentTypography": "sans-serif",
+    "currentNavbarStyle": "top-fixed"
+  },
+  "palettes": {
+    "nordic-light": {
+      "name": "Nordic Light",
+      "colors": {
+        "primary": "0 0% 4%",
+        "background": "0 0% 100%",
+        "foreground": "0 0% 4%",
+        "muted": "0 0% 96%",
+        "accent": "0 0% 92%"
+      }
+    },
+    "midnight-finance": {
+      "name": "Midnight Finance",
+      "colors": {
+        "primary": "222 84% 5%",
+        "background": "222 47% 11%",
+        "foreground": "0 0% 98%",
+        "muted": "217 33% 17%",
+        "accent": "217 33% 20%"
+      }
+    },
+    "soft-sepia": {
+      "name": "Soft Sepia",
+      "colors": {
+        "primary": "30 30% 20%",
+        "background": "30 40% 96%",
+        "foreground": "30 30% 20%",
+        "muted": "30 30% 88%",
+        "accent": "30 30% 85%"
+      }
+    }
+  }
+}

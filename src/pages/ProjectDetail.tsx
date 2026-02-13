@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useProject } from '@/hooks/usePortfolioData';
+import { useProject } from '@/hooks/useData';
+import { UniversalEmbed } from '@/components/embed/UniversalEmbed';
+import { ImageGallery } from '@/components/gallery/ImageGallery';
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -114,6 +116,18 @@ const ProjectDetail = () => {
               </div>
             </FadeIn>
 
+            {/* Image Gallery */}
+            {project.images && project.images.length > 0 && (
+              <FadeIn delay={0.32}>
+                <div className="mb-12">
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.2em] mb-6">
+                    Project Gallery
+                  </h2>
+                  <ImageGallery images={project.images} columns={3} />
+                </div>
+              </FadeIn>
+            )}
+
             {/* External Links */}
             <FadeIn delay={0.35}>
               <div className="flex flex-wrap gap-4 mb-16">
@@ -195,19 +209,19 @@ const ProjectDetail = () => {
 
                       {project.google_docs_url && (
                         <TabsContent value="docs">
-                          <iframe
-                            src={`${project.google_docs_url.replace('/edit', '/preview')}`}
-                            className="w-full h-[600px] border border-border"
-                            title="Google Document"
+                          <UniversalEmbed
+                            type="google-docs"
+                            url={project.google_docs_url}
+                            title={`${project.title} - Document`}
                           />
                         </TabsContent>
                       )}
                       {project.google_sheets_url && (
                         <TabsContent value="sheets">
-                          <iframe
-                            src={`${project.google_sheets_url.replace('/edit', '/preview')}`}
-                            className="w-full h-[600px] border border-border"
-                            title="Google Spreadsheet"
+                          <UniversalEmbed
+                            type="google-sheets"
+                            url={project.google_sheets_url}
+                            title={`${project.title} - Spreadsheet`}
                           />
                         </TabsContent>
                       )}
@@ -226,18 +240,20 @@ const ProjectDetail = () => {
                       )}
                       {project.pdf_url && (
                         <TabsContent value="pdf">
-                          <iframe
-                            src={project.pdf_url}
-                            className="w-full h-[600px] border border-border"
-                            title="PDF Document"
+                          <UniversalEmbed
+                            type="pdf"
+                            url={project.pdf_url}
+                            title={`${project.title} - PDF`}
                           />
                         </TabsContent>
                       )}
                       {project.embed_code && (
                         <TabsContent value="custom">
-                          <div
-                            className="w-full min-h-[400px]"
-                            dangerouslySetInnerHTML={{ __html: project.embed_code }}
+                          <UniversalEmbed
+                            type="custom"
+                            url=""
+                            embedCode={project.embed_code}
+                            title={project.title}
                           />
                         </TabsContent>
                       )}
