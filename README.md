@@ -62,6 +62,16 @@ This project is built with:
 
 ## How can I deploy this project?
 
+### GitHub Pages (Automatic Deployment)
+
+This project is configured to automatically deploy to GitHub Pages when changes are pushed to the `main` branch.
+
+**Live URL**: https://soumyakantabera.github.io/finance-portfolio-hub/
+
+The deployment is handled by GitHub Actions. See [DEPLOYMENT.md](./DEPLOYMENT.md) for more details.
+
+### Lovable Deployment
+
 Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
 ## Can I connect a custom domain to my Lovable project?
