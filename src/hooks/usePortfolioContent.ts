@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import contentData from '@/data/content.json';
-import type { PortfolioContent, SkillsByCategory } from '@/types/content';
-import { calculateSkillRankings } from '@/types/content';
+import type { PortfolioContent, SkillsByCategory, Skill } from '@/types/content';
+import { calculateSkillRankings, loadMasterSkills } from '@/types/content';
 
 /**
  * Hook to load portfolio content from static JSON file
@@ -15,18 +15,37 @@ export function usePortfolioContent() {
 }
 
 /**
+ * Hook to load master skills database
+ */
+export function useMasterSkills() {
+  return useQuery<Skill[]>({
+    queryKey: ['master-skills'],
+    queryFn: loadMasterSkills,
+    staleTime: Infinity,
+  });
+}
+
+/**
  * Hook to get skills with rankings based on citations
+ * Automatically detects and adds skills from projects, experiences, etc.
  */
 export function useSkillsWithRanking() {
-  const { data: content, ...rest } = usePortfolioContent();
+  const { data: content, ...contentRest } = usePortfolioContent();
+  const { data: masterSkills, ...masterRest } = useMasterSkills();
   
-  const skillsByCategory = content ? calculateSkillRankings(content) : {};
+  const skillsByCategory = (content && masterSkills) 
+    ? calculateSkillRankings(content, masterSkills) 
+    : {};
+  
+  const isLoading = contentRest.isLoading || masterRest.isLoading;
+  const isError = contentRest.isError || masterRest.isError;
   
   return {
     skillsByCategory,
     allSkills: Object.values(skillsByCategory).flat(),
     categories: Object.keys(skillsByCategory).sort(),
-    ...rest,
+    isLoading,
+    isError,
   };
 }
 

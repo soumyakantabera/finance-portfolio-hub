@@ -79,58 +79,106 @@ export interface SkillsByCategory {
   [category: string]: SkillWithRanking[];
 }
 
-// Helper function to calculate skill citations and rankings
-export function calculateSkillRankings(content: PortfolioContent): SkillsByCategory {
-  const skillCitations = new Map<string, number>();
+// Master skills database - load from masterSkills.json
+let masterSkillsCache: Skill[] | null = null;
+
+export async function loadMasterSkills(): Promise<Skill[]> {
+  if (masterSkillsCache) {
+    return masterSkillsCache;
+  }
   
-  // Initialize all skills with 0 citations
+  try {
+    // In production, the base path is /finance-portfolio-hub/
+    const basePath = import.meta.env.PROD ? '/finance-portfolio-hub' : '';
+    const response = await fetch(`${basePath}/data/masterSkills.json`);
+    const data = await response.json();
+    masterSkillsCache = data.skills;
+    return masterSkillsCache;
+  } catch (error) {
+    console.error('Error loading master skills:', error);
+    return [];
+  }
+}
+
+// Find skill in master database by name (case-insensitive)
+export function findSkillInMaster(skillName: string, masterSkills: Skill[]): Skill | undefined {
+  const normalizedName = skillName.trim().toLowerCase();
+  return masterSkills.find(skill => skill.name.toLowerCase() === normalizedName);
+}
+
+// Helper function to calculate skill citations and rankings with automatic skill detection
+export function calculateSkillRankings(content: PortfolioContent, masterSkills: Skill[] = []): SkillsByCategory {
+  const skillCitations = new Map<string, number>();
+  const skillDetails = new Map<string, Skill>();
+  
+  // Initialize all defined skills with 0 citations
   content.skills.forEach(skill => {
     skillCitations.set(skill.name, 0);
+    skillDetails.set(skill.name, skill);
   });
+  
+  // Helper to process and add a skill
+  const processSkill = (skillName: string) => {
+    const trimmedName = skillName.trim();
+    if (!trimmedName) return;
+    
+    // Update citation count
+    const count = skillCitations.get(trimmedName) || 0;
+    skillCitations.set(trimmedName, count + 1);
+    
+    // If skill not already defined, try to find it in master skills
+    if (!skillDetails.has(trimmedName) && masterSkills.length > 0) {
+      const masterSkill = findSkillInMaster(trimmedName, masterSkills);
+      if (masterSkill) {
+        skillDetails.set(trimmedName, masterSkill);
+      } else {
+        // Create a default skill entry for unknown skills
+        skillDetails.set(trimmedName, {
+          name: trimmedName,
+          category: 'Other',
+          icon: 'default_icon.svg'
+        });
+      }
+    }
+  };
   
   // Count citations from projects
   content.projects.forEach(project => {
-    project.skillsUsed.forEach(skillName => {
-      const count = skillCitations.get(skillName) || 0;
-      skillCitations.set(skillName, count + 1);
-    });
+    project.skillsUsed.forEach(processSkill);
   });
   
   // Count citations from experiences
   content.experiences.forEach(exp => {
-    exp.skillsUsed.forEach(skillName => {
-      const count = skillCitations.get(skillName) || 0;
-      skillCitations.set(skillName, count + 1);
-    });
+    exp.skillsUsed.forEach(processSkill);
   });
   
   // Count citations from education
   content.education.forEach(edu => {
-    edu.skillsUsed.forEach(skillName => {
-      const count = skillCitations.get(skillName) || 0;
-      skillCitations.set(skillName, count + 1);
-    });
+    edu.skillsUsed.forEach(processSkill);
   });
   
   // Count citations from certifications
   content.certifications.forEach(cert => {
-    cert.skillsUsed.forEach(skillName => {
-      const count = skillCitations.get(skillName) || 0;
-      skillCitations.set(skillName, count + 1);
-    });
+    cert.skillsUsed.forEach(processSkill);
   });
   
-  // Filter out skills with 0 citations and add ranking
-  const usedSkills = content.skills
-    .map(skill => ({
-      ...skill,
-      citationCount: skillCitations.get(skill.name) || 0,
-      rank: 0, // Will be set below
-    }))
-    .filter(skill => skill.citationCount > 0)
-    .sort((a, b) => b.citationCount - a.citationCount);
+  // Build array of skills with citations, filtering out unused skills
+  const usedSkills: SkillWithRanking[] = [];
+  skillCitations.forEach((count, skillName) => {
+    if (count > 0) {
+      const skill = skillDetails.get(skillName);
+      if (skill) {
+        usedSkills.push({
+          ...skill,
+          citationCount: count,
+          rank: 0, // Will be set below
+        });
+      }
+    }
+  });
   
-  // Assign ranks (1 = highest citations)
+  // Sort by citation count and assign ranks
+  usedSkills.sort((a, b) => b.citationCount - a.citationCount);
   usedSkills.forEach((skill, index) => {
     skill.rank = index + 1;
   });
