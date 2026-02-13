@@ -8,11 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/SEOHead';
 import { MediaEmbed } from '@/components/MediaEmbed';
-import { useProject } from '@/hooks/usePortfolioData';
+import { useStaticProject } from '@/hooks/useStaticData';
+import DOMPurify from 'dompurify';
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: project, isLoading } = useProject(id || '');
+  const { data: project, isLoading } = useStaticProject(id || '');
 
   if (isLoading) {
     return (
@@ -116,8 +117,21 @@ const ProjectDetail = () => {
               </div>
             </FadeIn>
 
-            {/* External Links */}
+            {/* Display Mode Badge */}
             <FadeIn delay={0.35}>
+              <div className="mb-4">
+                <Badge variant="outline" className="text-xs font-normal uppercase tracking-wider">
+                  {project.display_mode === 'iframe'
+                    ? 'Interactive'
+                    : project.display_mode === 'journal'
+                    ? 'Journal'
+                    : 'Embed'}
+                </Badge>
+              </div>
+            </FadeIn>
+
+            {/* External Links */}
+            <FadeIn delay={0.4}>
               <div className="flex flex-wrap gap-4 mb-16">
                 {project.external_url && (
                   <Button asChild className="uppercase tracking-wider text-xs">
@@ -146,26 +160,101 @@ const ProjectDetail = () => {
               </div>
             </FadeIn>
 
-            {/* Embeds */}
-            {hasEmbeds && (
-              <FadeIn delay={0.4}>
-                <MediaEmbed
-                  googleDocsUrl={project.google_docs_url}
-                  googleSheetsUrl={project.google_sheets_url}
-                  pdfUrl={project.pdf_url}
-                  embedCode={project.embed_code}
-                />
-                {project.github_url && (
-                  <div className="mt-6 border border-border p-8 text-center">
-                    <Github className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground mb-4">View the source code on GitHub</p>
-                    <Button asChild className="uppercase tracking-wider text-xs">
-                      <a href={project.github_url} target="_blank" rel="noopener noreferrer">
-                        Open Repository
-                      </a>
-                    </Button>
+            {/* Display Mode Content */}
+            {project.display_mode === 'iframe' && project.iframe_url && (
+              <FadeIn delay={0.45}>
+                <div className="mb-12">
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.2em] mb-6">
+                    Interactive View
+                  </h2>
+                  <div className="border border-border">
+                    <iframe
+                      src={project.iframe_url}
+                      className="w-full border-0"
+                      style={{ height: '600px' }}
+                      title={project.title}
+                      sandbox="allow-scripts allow-same-origin allow-popups"
+                    />
+                  </div>
+                </div>
+              </FadeIn>
+            )}
+
+            {project.display_mode === 'journal' && project.journal_content && (
+              <FadeIn delay={0.45}>
+                <div className="mb-12">
+                  <article className="prose prose-neutral dark:prose-invert max-w-none">
+                    {project.journal_content.split('\n').map((line, idx) => {
+                      const trimmed = line.trim();
+                      if (trimmed.startsWith('## ')) {
+                        return (
+                          <h2 key={idx} className="text-2xl font-display font-bold mt-10 mb-4">
+                            {trimmed.replace('## ', '')}
+                          </h2>
+                        );
+                      }
+                      if (trimmed.startsWith('- ')) {
+                        return (
+                          <li key={idx} className="text-muted-foreground ml-4 mb-1">
+                            {trimmed.replace('- ', '')}
+                          </li>
+                        );
+                      }
+                      if (trimmed === '') {
+                        return <br key={idx} />;
+                      }
+                      return (
+                        <p key={idx} className="text-lg text-muted-foreground leading-relaxed mb-4">
+                          {trimmed}
+                        </p>
+                      );
+                    })}
+                  </article>
+                </div>
+              </FadeIn>
+            )}
+
+            {project.display_mode === 'embedding' && (
+              <FadeIn delay={0.45}>
+                {project.embed_code && (
+                  <div className="mb-12">
+                    <h2 className="text-sm font-semibold uppercase tracking-[0.2em] mb-6">
+                      Embedded Content
+                    </h2>
+                    <div
+                      className="border border-border p-6"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(project.embed_code, {
+                          ADD_TAGS: ['iframe'],
+                          ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'],
+                        }),
+                      }}
+                    />
                   </div>
                 )}
+                {hasEmbeds && (
+                  <MediaEmbed
+                    googleDocsUrl={project.google_docs_url}
+                    googleSheetsUrl={project.google_sheets_url}
+                    pdfUrl={project.pdf_url}
+                    embedCode={null}
+                  />
+                )}
+              </FadeIn>
+            )}
+
+            {/* GitHub Section (for non-embedding modes) */}
+            {project.display_mode !== 'embedding' && project.github_url && (
+              <FadeIn delay={0.5}>
+                <div className="mt-6 border border-border p-8 text-center">
+                  <Github className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground mb-4">View the source code on GitHub</p>
+                  <Button asChild className="uppercase tracking-wider text-xs">
+                    <a href={project.github_url} target="_blank" rel="noopener noreferrer">
+                      Open Repository
+                    </a>
+                  </Button>
+                </div>
               </FadeIn>
             )}
           </div>

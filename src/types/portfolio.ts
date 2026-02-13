@@ -12,6 +12,8 @@ export interface Profile {
   updated_at: string;
 }
 
+export type ProjectDisplayMode = 'embedding' | 'iframe' | 'journal';
+
 export interface Project {
   id: string;
   title: string;
@@ -27,11 +29,14 @@ export interface Project {
   video_url: string | null;
   external_url: string | null;
   embed_code: string | null;
+  iframe_url: string | null;
+  journal_content: string | null;
   is_featured: boolean;
   display_order: number;
+  display_mode: ProjectDisplayMode;
   tags: string[];
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Education {
@@ -60,13 +65,28 @@ export interface Experience {
   updated_at: string;
 }
 
+export interface SkillReference {
+  label: string;
+  url: string;
+}
+
 export interface Skill {
   id: string;
   name: string;
   category: string;
   proficiency: number;
-  display_order: number;
-  created_at: string;
+  display_order?: number;
+  references?: SkillReference[];
+  created_at?: string;
+}
+
+export interface SkillCategoryData {
+  name: string;
+  skills: Omit<Skill, 'category' | 'display_order' | 'created_at'>[];
+}
+
+export interface SkillsData {
+  categories: SkillCategoryData[];
 }
 
 export interface Certification {

@@ -8,11 +8,15 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useProjects } from '@/hooks/usePortfolioData';
+import { useStaticProjects } from '@/hooks/useStaticData';
 
 const categories = ['All', 'Financial Models', 'Case Studies', 'Code', 'Research'];
 
 const Projects = () => {
-  const { data: projects, isLoading } = useProjects();
+  const { data: dbProjects, isLoading: dbLoading } = useProjects();
+  const { data: staticProjects, isLoading: staticLoading } = useStaticProjects();
+  const isLoading = dbLoading && staticLoading;
+  const projects = (dbProjects && dbProjects.length > 0) ? dbProjects : staticProjects;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 

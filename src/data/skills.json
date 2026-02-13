@@ -1,0 +1,131 @@
+{
+  "categories": [
+    {
+      "name": "Programming Languages",
+      "skills": [
+        {
+          "id": "skill-1",
+          "name": "Python",
+          "proficiency": 90,
+          "references": [
+            { "label": "Algorithmic Trading Strategy", "url": "/projects/proj-4" },
+            { "label": "Risk Assessment Model", "url": "/projects/proj-2" }
+          ]
+        },
+        {
+          "id": "skill-2",
+          "name": "JavaScript / TypeScript",
+          "proficiency": 85,
+          "references": [
+            { "label": "Financial Dashboard", "url": "/projects/proj-1" }
+          ]
+        },
+        {
+          "id": "skill-3",
+          "name": "SQL",
+          "proficiency": 80,
+          "references": []
+        },
+        {
+          "id": "skill-4",
+          "name": "R",
+          "proficiency": 70,
+          "references": []
+        }
+      ]
+    },
+    {
+      "name": "Financial Modeling",
+      "skills": [
+        {
+          "id": "skill-5",
+          "name": "DCF Analysis",
+          "proficiency": 95,
+          "references": []
+        },
+        {
+          "id": "skill-6",
+          "name": "Risk Management",
+          "proficiency": 88,
+          "references": [
+            { "label": "Risk Assessment Model", "url": "/projects/proj-2" }
+          ]
+        },
+        {
+          "id": "skill-7",
+          "name": "Portfolio Optimization",
+          "proficiency": 85,
+          "references": []
+        },
+        {
+          "id": "skill-8",
+          "name": "Derivatives Pricing",
+          "proficiency": 75,
+          "references": []
+        }
+      ]
+    },
+    {
+      "name": "Data Analysis Tools",
+      "skills": [
+        {
+          "id": "skill-9",
+          "name": "Pandas / NumPy",
+          "proficiency": 92,
+          "references": [
+            { "label": "Risk Assessment Model", "url": "/projects/proj-2" }
+          ]
+        },
+        {
+          "id": "skill-10",
+          "name": "Excel / VBA",
+          "proficiency": 90,
+          "references": []
+        },
+        {
+          "id": "skill-11",
+          "name": "Tableau / Power BI",
+          "proficiency": 78,
+          "references": []
+        },
+        {
+          "id": "skill-12",
+          "name": "Bloomberg Terminal",
+          "proficiency": 82,
+          "references": []
+        }
+      ]
+    },
+    {
+      "name": "Frameworks & Tools",
+      "skills": [
+        {
+          "id": "skill-13",
+          "name": "React",
+          "proficiency": 85,
+          "references": [
+            { "label": "Financial Dashboard", "url": "/projects/proj-1" }
+          ]
+        },
+        {
+          "id": "skill-14",
+          "name": "Git / Version Control",
+          "proficiency": 88,
+          "references": []
+        },
+        {
+          "id": "skill-15",
+          "name": "Docker",
+          "proficiency": 70,
+          "references": []
+        },
+        {
+          "id": "skill-16",
+          "name": "AWS / Cloud",
+          "proficiency": 65,
+          "references": []
+        }
+      ]
+    }
+  ]
+}

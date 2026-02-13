@@ -1,8 +1,25 @@
 import { useSkills } from '@/hooks/usePortfolioData';
+import { useStaticSkills } from '@/hooks/useStaticData';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function SkillsHighlight() {
-  const { data: skills, isLoading } = useSkills();
+  const { data: dbSkills, isLoading: dbLoading } = useSkills();
+  const { data: staticSkillsData, isLoading: staticLoading } = useStaticSkills();
+  const isLoading = dbLoading && staticLoading;
+
+  // Convert static skills data to flat array format for compatibility
+  const staticSkills = staticSkillsData?.categories.flatMap((cat) =>
+    cat.skills.map((s) => ({
+      id: s.id,
+      name: s.name,
+      category: cat.name,
+      proficiency: s.proficiency,
+      display_order: 0,
+      created_at: '',
+    }))
+  );
+
+  const skills = (dbSkills && dbSkills.length > 0) ? dbSkills : staticSkills;
 
   if (isLoading) {
     return (
