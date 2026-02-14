@@ -47,6 +47,7 @@ export interface Education {
   start_date: string | null;
   end_date: string | null;
   description: string | null;
+  skills: string[];
   display_order: number;
   created_at: string;
   updated_at: string;
@@ -60,6 +61,7 @@ export interface Experience {
   end_date: string | null;
   is_current: boolean;
   description: string | null;
+  skills: string[];
   display_order: number;
   created_at: string;
   updated_at: string;
@@ -96,6 +98,7 @@ export interface Certification {
   issue_date: string | null;
   expiration_date: string | null;
   credential_url: string | null;
+  skills: string[];
   display_order: number;
   created_at: string;
 }
