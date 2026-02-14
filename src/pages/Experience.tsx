@@ -6,6 +6,7 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SkillsList } from '@/components/ui/skill-badge';
 import { useExperience } from '@/hooks/usePortfolioData';
 
 const Experience = () => {
@@ -95,6 +96,15 @@ const Experience = () => {
                             <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
                               {exp.description}
                             </p>
+                          </div>
+                        )}
+
+                        {exp.skills && exp.skills.length > 0 && (
+                          <div className="mt-6 pl-16">
+                            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
+                              Skills Used
+                            </p>
+                            <SkillsList skills={exp.skills} showIcons={true} />
                           </div>
                         )}
                       </CardContent>

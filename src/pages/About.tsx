@@ -6,6 +6,7 @@ import { FadeIn } from '@/components/motion/FadeIn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SkillsList } from '@/components/ui/skill-badge';
 import {
   useProfile,
   useEducation,
@@ -155,6 +156,11 @@ const About = () => {
                             {exp.description}
                           </p>
                         )}
+                        {exp.skills && exp.skills.length > 0 && (
+                          <div className="mt-4">
+                            <SkillsList skills={exp.skills} showIcons={true} variant="outline" />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -189,6 +195,11 @@ const About = () => {
                           <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
                             {edu.description}
                           </p>
+                        )}
+                        {edu.skills && edu.skills.length > 0 && (
+                          <div className="mt-4">
+                            <SkillsList skills={edu.skills} showIcons={true} variant="outline" />
+                          </div>
                         )}
                       </div>
                     ))}
@@ -244,24 +255,31 @@ const About = () => {
                   <h2 className="text-3xl font-bold font-display mb-8">Certifications</h2>
                   <div className="space-y-0">
                     {certifications.map((cert) => (
-                      <div key={cert.id} className="border-t border-border py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                        <div>
-                          <h3 className="font-semibold">{cert.name}</h3>
-                          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                            {cert.issuing_organization}
-                            {cert.issue_date && ` · ${formatDate(cert.issue_date)}`}
-                          </p>
+                      <div key={cert.id} className="border-t border-border py-5">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
+                          <div>
+                            <h3 className="font-semibold">{cert.name}</h3>
+                            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                              {cert.issuing_organization}
+                              {cert.issue_date && ` · ${formatDate(cert.issue_date)}`}
+                            </p>
+                          </div>
+                          {cert.credential_url && (
+                            <a
+                              href={cert.credential_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+                            >
+                              View Credential
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
                         </div>
-                        {cert.credential_url && (
-                          <a
-                            href={cert.credential_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
-                          >
-                            View Credential
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
+                        {cert.skills && cert.skills.length > 0 && (
+                          <div className="mt-3">
+                            <SkillsList skills={cert.skills} showIcons={true} variant="outline" />
+                          </div>
                         )}
                       </div>
                     ))}
