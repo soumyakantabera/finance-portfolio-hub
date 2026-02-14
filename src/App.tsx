@@ -10,6 +10,7 @@ import ProjectDetail from "./pages/ProjectDetail";
 import Skills from "./pages/Skills";
 import EnhancedSkills from "./pages/EnhancedSkills";
 import About from "./pages/About";
+import Experience from "./pages/Experience";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -23,7 +24,6 @@ import AdminProfile from "./pages/admin/AdminProfile";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminCustomization from "./pages/admin/AdminCustomization";
-import AdminGitHub from "./pages/admin/AdminGitHub";
 
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
@@ -43,6 +43,7 @@ const App = () => (
             <Route path="/skills" element={<EnhancedSkills />} />
             <Route path="/skills/original" element={<Skills />} />
             <Route path="/about" element={<About />} />
+            <Route path="/experience" element={<Experience />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
@@ -56,7 +57,6 @@ const App = () => (
             <Route path="/admin/messages" element={<ProtectedRoute><AdminMessages /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
             <Route path="/admin/customization" element={<ProtectedRoute><AdminCustomization /></ProtectedRoute>} />
-            <Route path="/admin/github" element={<ProtectedRoute><AdminGitHub /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

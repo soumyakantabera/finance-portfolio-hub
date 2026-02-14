@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SEOHead } from '@/components/SEOHead';
 import { MediaEmbed } from '@/components/MediaEmbed';
+import { SkillsList } from '@/components/ui/skill-badge';
 import { useStaticProject } from '@/hooks/useStaticData';
 import DOMPurify from 'dompurify';
 
@@ -84,12 +85,11 @@ const ProjectDetail = () => {
                   {project.title}
                 </h1>
                 {project.tags && project.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs font-normal uppercase tracking-wider">
-                        {tag}
-                      </Badge>
-                    ))}
+                  <div className="mb-4">
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
+                      Skills & Tags
+                    </p>
+                    <SkillsList skills={project.tags} showIcons={true} variant="outline" />
                   </div>
                 )}
               </div>

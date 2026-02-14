@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Pencil, Trash2, GripVertical } from 'lucide-react';
+import { SkillSelector } from '@/components/admin/SkillSelector';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,6 +62,7 @@ const AdminProjects = () => {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -99,7 +101,7 @@ const AdminProjects = () => {
         video_url: data.video_url || null,
         external_url: data.external_url || null,
         embed_code: data.embed_code || null,
-        tags: data.tags ? data.tags.split(',').map((t) => t.trim()) : [],
+        tags: selectedSkills,
         is_featured: data.is_featured,
       };
 
@@ -155,6 +157,7 @@ const AdminProjects = () => {
 
   const openEditDialog = (project: Project) => {
     setEditingProject(project);
+    setSelectedSkills(project.tags || []);
     form.reset({
       title: project.title,
       short_description: project.short_description || '',
@@ -177,6 +180,7 @@ const AdminProjects = () => {
 
   const openNewDialog = () => {
     setEditingProject(null);
+    setSelectedSkills([]);
     form.reset();
     setIsDialogOpen(true);
   };
@@ -293,19 +297,14 @@ const AdminProjects = () => {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="tags"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tags (comma-separated)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Python, DCF, Valuation" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* Skills/Tags Selector */}
+                  <div className="space-y-2">
+                    <SkillSelector
+                      selectedSkills={selectedSkills}
+                      onChange={setSelectedSkills}
+                      label="Skills/Tags"
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
