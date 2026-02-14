@@ -12,8 +12,6 @@ export interface Profile {
   updated_at: string;
 }
 
-export type ProjectDisplayMode = 'embedding' | 'iframe' | 'journal';
-
 export interface Project {
   id: string;
   title: string;
@@ -24,19 +22,14 @@ export interface Project {
   github_url: string | null;
   google_docs_url: string | null;
   google_sheets_url: string | null;
-  google_slides_url: string | null;
   pdf_url: string | null;
-  video_url: string | null;
   external_url: string | null;
   embed_code: string | null;
-  iframe_url: string | null;
-  journal_content: string | null;
   is_featured: boolean;
   display_order: number;
-  display_mode: ProjectDisplayMode;
   tags: string[];
-  created_at?: string;
-  updated_at?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Education {
@@ -47,7 +40,6 @@ export interface Education {
   start_date: string | null;
   end_date: string | null;
   description: string | null;
-  skills: string[];
   display_order: number;
   created_at: string;
   updated_at: string;
@@ -61,15 +53,9 @@ export interface Experience {
   end_date: string | null;
   is_current: boolean;
   description: string | null;
-  skills: string[];
   display_order: number;
   created_at: string;
   updated_at: string;
-}
-
-export interface SkillReference {
-  label: string;
-  url: string;
 }
 
 export interface Skill {
@@ -77,18 +63,8 @@ export interface Skill {
   name: string;
   category: string;
   proficiency: number;
-  display_order?: number;
-  references?: SkillReference[];
-  created_at?: string;
-}
-
-export interface SkillCategoryData {
-  name: string;
-  skills: Omit<Skill, 'category' | 'display_order' | 'created_at'>[];
-}
-
-export interface SkillsData {
-  categories: SkillCategoryData[];
+  display_order: number;
+  created_at: string;
 }
 
 export interface Certification {
@@ -98,7 +74,6 @@ export interface Certification {
   issue_date: string | null;
   expiration_date: string | null;
   credential_url: string | null;
-  skills: string[];
   display_order: number;
   created_at: string;
 }
@@ -122,46 +97,6 @@ export interface ContactMessage {
   message: string;
   is_read: boolean;
   created_at: string;
-}
-
-export interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt: string | null;
-  featured_image: string | null;
-  image_filter: ImageFilter | null;
-  category: string;
-  tags: string[];
-  status: 'draft' | 'published';
-  meta_title: string | null;
-  meta_description: string | null;
-  meta_keywords: string | null;
-  video_url: string | null;
-  gallery_images: string[];
-  google_docs_url: string | null;
-  google_sheets_url: string | null;
-  google_slides_url: string | null;
-  pdf_url: string | null;
-  embed_code: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export type ImageFilter = 'none' | 'grayscale' | 'monochrome' | 'retro' | 'warm' | 'cool' | 'high-contrast';
-
-export interface PageCustomization {
-  id: string;
-  page_path: string;
-  primary_color: string | null;
-  secondary_color: string | null;
-  accent_color: string | null;
-  heading_font: string | null;
-  body_font: string | null;
-  navbar_color: string | null;
-  navbar_font: string | null;
-  hidden_nav_links: string[];
 }
 
 export type ProjectCategory = 'Financial Models' | 'Case Studies' | 'Code' | 'Research';

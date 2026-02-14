@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -13,12 +13,13 @@ import {
   Menu,
   X,
   Home,
-  Palette,
-  BadgeCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+
+import { BadgeCheck } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -29,7 +30,6 @@ const navItems = [
   { href: '/admin/skills', label: 'Skills', icon: Award },
   { href: '/admin/certifications', label: 'Certifications', icon: BadgeCheck },
   { href: '/admin/messages', label: 'Messages', icon: Mail },
-  { href: '/admin/customization', label: 'Customization', icon: Palette },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -42,10 +42,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin_authenticated');
-    localStorage.removeItem('admin_session_time');
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUserEmail(user?.email ?? null);
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     toast({ title: 'Logged out', description: 'See you next time!' });
     navigate('/');
   };
@@ -111,7 +117,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </Link>
               </Button>
               <div className="px-3 py-2 text-xs text-muted-foreground truncate">
-                Admin
+                {userEmail}
               </div>
               <Button
                 variant="ghost"

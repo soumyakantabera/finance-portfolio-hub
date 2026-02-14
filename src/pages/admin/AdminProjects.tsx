@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Pencil, Trash2, GripVertical } from 'lucide-react';
-import { SkillSelector } from '@/components/admin/SkillSelector';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,9 +42,7 @@ const projectSchema = z.object({
   github_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_docs_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_sheets_url: z.string().url('Invalid URL').optional().or(z.literal('')),
-  google_slides_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   pdf_url: z.string().url('Invalid URL').optional().or(z.literal('')),
-  video_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   external_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   embed_code: z.string().optional(),
   tags: z.string().optional(),
@@ -62,7 +59,6 @@ const AdminProjects = () => {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -75,9 +71,7 @@ const AdminProjects = () => {
       github_url: '',
       google_docs_url: '',
       google_sheets_url: '',
-      google_slides_url: '',
       pdf_url: '',
-      video_url: '',
       external_url: '',
       embed_code: '',
       tags: '',
@@ -96,12 +90,10 @@ const AdminProjects = () => {
         github_url: data.github_url || null,
         google_docs_url: data.google_docs_url || null,
         google_sheets_url: data.google_sheets_url || null,
-        google_slides_url: data.google_slides_url || null,
         pdf_url: data.pdf_url || null,
-        video_url: data.video_url || null,
         external_url: data.external_url || null,
         embed_code: data.embed_code || null,
-        tags: selectedSkills,
+        tags: data.tags ? data.tags.split(',').map((t) => t.trim()) : [],
         is_featured: data.is_featured,
       };
 
@@ -157,7 +149,6 @@ const AdminProjects = () => {
 
   const openEditDialog = (project: Project) => {
     setEditingProject(project);
-    setSelectedSkills(project.tags || []);
     form.reset({
       title: project.title,
       short_description: project.short_description || '',
@@ -167,9 +158,7 @@ const AdminProjects = () => {
       github_url: project.github_url || '',
       google_docs_url: project.google_docs_url || '',
       google_sheets_url: project.google_sheets_url || '',
-      google_slides_url: project.google_slides_url || '',
       pdf_url: project.pdf_url || '',
-      video_url: project.video_url || '',
       external_url: project.external_url || '',
       embed_code: project.embed_code || '',
       tags: project.tags?.join(', ') || '',
@@ -180,7 +169,6 @@ const AdminProjects = () => {
 
   const openNewDialog = () => {
     setEditingProject(null);
-    setSelectedSkills([]);
     form.reset();
     setIsDialogOpen(true);
   };
@@ -297,14 +285,19 @@ const AdminProjects = () => {
                     )}
                   />
 
-                  {/* Skills/Tags Selector */}
-                  <div className="space-y-2">
-                    <SkillSelector
-                      selectedSkills={selectedSkills}
-                      onChange={setSelectedSkills}
-                      label="Skills/Tags"
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tags (comma-separated)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Python, DCF, Valuation" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
@@ -373,36 +366,6 @@ const AdminProjects = () => {
                           <FormLabel>Google Sheets URL</FormLabel>
                           <FormControl>
                             <Input placeholder="https://sheets.google.com/..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="google_slides_url"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Google Slides URL</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://docs.google.com/presentation/..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="video_url"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Video URL (YouTube or direct)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://youtube.com/watch?v=..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

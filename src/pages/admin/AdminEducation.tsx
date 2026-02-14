@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Pencil, Trash2, GripVertical } from 'lucide-react';
 import { format } from 'date-fns';
-import { SkillSelector } from '@/components/admin/SkillSelector';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,7 +43,6 @@ const AdminEducation = () => {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Education | null>(null);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const form = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
@@ -67,7 +65,6 @@ const AdminEducation = () => {
         start_date: data.start_date || null,
         end_date: data.end_date || null,
         description: data.description || null,
-        skills: selectedSkills,
       };
 
       if (editingItem) {
@@ -89,7 +86,6 @@ const AdminEducation = () => {
       });
       setIsDialogOpen(false);
       setEditingItem(null);
-      setSelectedSkills([]);
       form.reset();
     },
     onError: (error: any) => {
@@ -121,7 +117,6 @@ const AdminEducation = () => {
 
   const openEditDialog = (item: Education) => {
     setEditingItem(item);
-    setSelectedSkills(item.skills || []);
     form.reset({
       institution: item.institution,
       degree: item.degree,
@@ -135,7 +130,6 @@ const AdminEducation = () => {
 
   const openNewDialog = () => {
     setEditingItem(null);
-    setSelectedSkills([]);
     form.reset();
     setIsDialogOpen(true);
   };
@@ -266,15 +260,6 @@ const AdminEducation = () => {
                       </FormItem>
                     )}
                   />
-
-                  {/* Skills Selector */}
-                  <div className="space-y-2">
-                    <SkillSelector
-                      selectedSkills={selectedSkills}
-                      onChange={setSelectedSkills}
-                      label="Skills Learned"
-                    />
-                  </div>
 
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>

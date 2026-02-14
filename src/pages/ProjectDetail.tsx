@@ -1,20 +1,17 @@
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, Github, FileText } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Github, FileText, Table } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { PageTransition } from '@/components/motion/PageTransition';
 import { FadeIn } from '@/components/motion/FadeIn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SEOHead } from '@/components/SEOHead';
-import { MediaEmbed } from '@/components/MediaEmbed';
-import { SkillsList } from '@/components/ui/skill-badge';
-import { useStaticProject } from '@/hooks/useStaticData';
-import DOMPurify from 'dompurify';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useProject } from '@/hooks/usePortfolioData';
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: project, isLoading } = useStaticProject(id || '');
+  const { data: project, isLoading } = useProject(id || '');
 
   if (isLoading) {
     return (
@@ -59,7 +56,6 @@ const ProjectDetail = () => {
 
   return (
     <Layout>
-      <SEOHead title={project.title} description={project.short_description || project.description || undefined} />
       <PageTransition>
         <div className="py-20 md:py-32">
           <div className="container max-w-4xl">
@@ -85,11 +81,12 @@ const ProjectDetail = () => {
                   {project.title}
                 </h1>
                 {project.tags && project.tags.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">
-                      Skills & Tags
-                    </p>
-                    <SkillsList skills={project.tags} showIcons={true} variant="outline" />
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-xs font-normal uppercase tracking-wider">
+                        {tag}
+                      </Badge>
+                    ))}
                   </div>
                 )}
               </div>
@@ -117,21 +114,8 @@ const ProjectDetail = () => {
               </div>
             </FadeIn>
 
-            {/* Display Mode Badge */}
-            <FadeIn delay={0.35}>
-              <div className="mb-4">
-                <Badge variant="outline" className="text-xs font-normal uppercase tracking-wider">
-                  {project.display_mode === 'iframe'
-                    ? 'Interactive'
-                    : project.display_mode === 'journal'
-                    ? 'Journal'
-                    : 'Embed'}
-                </Badge>
-              </div>
-            </FadeIn>
-
             {/* External Links */}
-            <FadeIn delay={0.4}>
+            <FadeIn delay={0.35}>
               <div className="flex flex-wrap gap-4 mb-16">
                 {project.external_url && (
                   <Button asChild className="uppercase tracking-wider text-xs">
@@ -160,100 +144,105 @@ const ProjectDetail = () => {
               </div>
             </FadeIn>
 
-            {/* Display Mode Content */}
-            {project.display_mode === 'iframe' && project.iframe_url && (
-              <FadeIn delay={0.45}>
-                <div className="mb-12">
-                  <h2 className="text-sm font-semibold uppercase tracking-[0.2em] mb-6">
-                    Interactive View
-                  </h2>
-                  <div className="border border-border">
-                    <iframe
-                      src={project.iframe_url}
-                      className="w-full border-0"
-                      style={{ height: '600px' }}
-                      title={project.title}
-                      sandbox="allow-scripts allow-popups"
-                    />
-                  </div>
-                </div>
-              </FadeIn>
-            )}
-
-            {project.display_mode === 'journal' && project.journal_content && (
-              <FadeIn delay={0.45}>
-                <div className="mb-12">
-                  <article className="prose prose-neutral dark:prose-invert max-w-none">
-                    {project.journal_content.split('\n').map((line, idx) => {
-                      const trimmed = line.trim();
-                      if (trimmed.startsWith('## ')) {
-                        return (
-                          <h2 key={idx} className="text-2xl font-display font-bold mt-10 mb-4">
-                            {trimmed.replace('## ', '')}
-                          </h2>
-                        );
-                      }
-                      if (trimmed.startsWith('- ')) {
-                        return (
-                          <li key={idx} className="text-muted-foreground ml-4 mb-1">
-                            {trimmed.replace('- ', '')}
-                          </li>
-                        );
-                      }
-                      if (trimmed === '') {
-                        return <br key={idx} />;
-                      }
-                      return (
-                        <p key={idx} className="text-lg text-muted-foreground leading-relaxed mb-4">
-                          {trimmed}
-                        </p>
-                      );
-                    })}
-                  </article>
-                </div>
-              </FadeIn>
-            )}
-
-            {project.display_mode === 'embedding' && (
-              <FadeIn delay={0.45}>
-                {project.embed_code && (
-                  <div className="mb-12">
-                    <h2 className="text-sm font-semibold uppercase tracking-[0.2em] mb-6">
-                      Embedded Content
+            {/* Embeds */}
+            {hasEmbeds && (
+              <FadeIn delay={0.4}>
+                <div className="border border-border">
+                  <div className="p-6 border-b border-border">
+                    <h2 className="text-sm font-semibold uppercase tracking-[0.2em]">
+                      Project Resources
                     </h2>
-                    <div
-                      className="border border-border p-6"
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(project.embed_code, {
-                          ADD_TAGS: ['iframe'],
-                          ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'],
-                        }),
-                      }}
-                    />
                   </div>
-                )}
-                {hasEmbeds && (
-                  <MediaEmbed
-                    googleDocsUrl={project.google_docs_url}
-                    googleSheetsUrl={project.google_sheets_url}
-                    pdfUrl={project.pdf_url}
-                    embedCode={null}
-                  />
-                )}
-              </FadeIn>
-            )}
+                  <div className="p-6">
+                    <Tabs defaultValue={
+                      project.google_docs_url ? 'docs' :
+                      project.google_sheets_url ? 'sheets' :
+                      project.github_url ? 'github' :
+                      project.pdf_url ? 'pdf' :
+                      'custom'
+                    }>
+                      <TabsList className="mb-4 bg-transparent border-b border-border rounded-none p-0 h-auto">
+                        {project.google_docs_url && (
+                          <TabsTrigger value="docs" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-foreground data-[state=active]:shadow-none text-xs uppercase tracking-wider">
+                            <FileText className="mr-2 h-3 w-3" />
+                            Document
+                          </TabsTrigger>
+                        )}
+                        {project.google_sheets_url && (
+                          <TabsTrigger value="sheets" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-foreground data-[state=active]:shadow-none text-xs uppercase tracking-wider">
+                            <Table className="mr-2 h-3 w-3" />
+                            Spreadsheet
+                          </TabsTrigger>
+                        )}
+                        {project.github_url && (
+                          <TabsTrigger value="github" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-foreground data-[state=active]:shadow-none text-xs uppercase tracking-wider">
+                            <Github className="mr-2 h-3 w-3" />
+                            Repository
+                          </TabsTrigger>
+                        )}
+                        {project.pdf_url && (
+                          <TabsTrigger value="pdf" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-foreground data-[state=active]:shadow-none text-xs uppercase tracking-wider">
+                            <FileText className="mr-2 h-3 w-3" />
+                            PDF
+                          </TabsTrigger>
+                        )}
+                        {project.embed_code && (
+                          <TabsTrigger value="custom" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-foreground data-[state=active]:shadow-none text-xs uppercase tracking-wider">
+                            Dashboard
+                          </TabsTrigger>
+                        )}
+                      </TabsList>
 
-            {/* GitHub Section (for non-embedding modes) */}
-            {project.display_mode !== 'embedding' && project.github_url && (
-              <FadeIn delay={0.5}>
-                <div className="mt-6 border border-border p-8 text-center">
-                  <Github className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-4">View the source code on GitHub</p>
-                  <Button asChild className="uppercase tracking-wider text-xs">
-                    <a href={project.github_url} target="_blank" rel="noopener noreferrer">
-                      Open Repository
-                    </a>
-                  </Button>
+                      {project.google_docs_url && (
+                        <TabsContent value="docs">
+                          <iframe
+                            src={`${project.google_docs_url.replace('/edit', '/preview')}`}
+                            className="w-full h-[600px] border border-border"
+                            title="Google Document"
+                          />
+                        </TabsContent>
+                      )}
+                      {project.google_sheets_url && (
+                        <TabsContent value="sheets">
+                          <iframe
+                            src={`${project.google_sheets_url.replace('/edit', '/preview')}`}
+                            className="w-full h-[600px] border border-border"
+                            title="Google Spreadsheet"
+                          />
+                        </TabsContent>
+                      )}
+                      {project.github_url && (
+                        <TabsContent value="github">
+                          <div className="border border-border p-8 text-center">
+                            <Github className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
+                            <p className="text-sm text-muted-foreground mb-4">View the source code on GitHub</p>
+                            <Button asChild className="uppercase tracking-wider text-xs">
+                              <a href={project.github_url} target="_blank" rel="noopener noreferrer">
+                                Open Repository
+                              </a>
+                            </Button>
+                          </div>
+                        </TabsContent>
+                      )}
+                      {project.pdf_url && (
+                        <TabsContent value="pdf">
+                          <iframe
+                            src={project.pdf_url}
+                            className="w-full h-[600px] border border-border"
+                            title="PDF Document"
+                          />
+                        </TabsContent>
+                      )}
+                      {project.embed_code && (
+                        <TabsContent value="custom">
+                          <div
+                            className="w-full min-h-[400px]"
+                            dangerouslySetInnerHTML={{ __html: project.embed_code }}
+                          />
+                        </TabsContent>
+                      )}
+                    </Tabs>
+                  </div>
                 </div>
               </FadeIn>
             )}

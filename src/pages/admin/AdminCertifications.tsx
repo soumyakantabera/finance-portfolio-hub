@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2, ExternalLink, GripVertical } from 'lucide-react';
-import { SkillSelector } from '@/components/admin/SkillSelector';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,12 +60,10 @@ export default function AdminCertifications() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCert, setEditingCert] = useState<Certification | null>(null);
   const [form, setForm] = useState<CertificationFormData>(emptyForm);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const handleOpenDialog = (cert?: Certification) => {
     if (cert) {
       setEditingCert(cert);
-      setSelectedSkills(cert.skills || []);
       setForm({
         name: cert.name,
         issuing_organization: cert.issuing_organization || '',
@@ -77,7 +74,6 @@ export default function AdminCertifications() {
       });
     } else {
       setEditingCert(null);
-      setSelectedSkills([]);
       setForm({
         ...emptyForm,
         display_order: (certifications?.length || 0) + 1,
@@ -96,7 +92,6 @@ export default function AdminCertifications() {
       expiration_date: form.expiration_date || null,
       credential_url: form.credential_url || null,
       display_order: form.display_order,
-      skills: selectedSkills,
     };
 
     if (editingCert) {
@@ -124,7 +119,6 @@ export default function AdminCertifications() {
     setIsDialogOpen(false);
     setForm(emptyForm);
     setEditingCert(null);
-    setSelectedSkills([]);
   };
 
   const handleDelete = async (id: string) => {
@@ -239,15 +233,6 @@ export default function AdminCertifications() {
                     onChange={(e) =>
                       setForm({ ...form, display_order: parseInt(e.target.value) || 0 })
                     }
-                  />
-                </div>
-
-                {/* Skills Selector */}
-                <div className="space-y-2">
-                  <SkillSelector
-                    selectedSkills={selectedSkills}
-                    onChange={setSelectedSkills}
-                    label="Relevant Skills"
                   />
                 </div>
 

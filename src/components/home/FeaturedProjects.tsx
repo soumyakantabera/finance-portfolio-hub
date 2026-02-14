@@ -2,14 +2,10 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useFeaturedProjects } from '@/hooks/usePortfolioData';
-import { useStaticFeaturedProjects } from '@/hooks/useStaticData';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function FeaturedProjects() {
-  const { data: dbProjects, isLoading: dbLoading } = useFeaturedProjects();
-  const { data: staticProjects, isLoading: staticLoading } = useStaticFeaturedProjects();
-  const isLoading = dbLoading || staticLoading;
-  const projects = (dbProjects && dbProjects.length > 0) ? dbProjects : staticProjects;
+  const { data: projects, isLoading } = useFeaturedProjects();
 
   if (isLoading) {
     return (
