@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/projects', label: 'Projects' },
+  { href: '/skills', label: 'Skills' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -18,14 +19,12 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-background border-b border-border">
       <div className="container flex h-20 items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="flex items-center">
           <span className="text-xl font-display font-bold tracking-tight uppercase">
             Portfolio
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-12">
           {navLinks.map((link) => (
             <Link
@@ -43,7 +42,6 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Mobile Menu Button */}
         <Button
           variant="ghost"
           size="icon"
@@ -54,7 +52,6 @@ export function Header() {
         </Button>
       </div>
 
-      {/* Mobile Navigation */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-border bg-background">
           <nav className="container py-8 flex flex-col space-y-6">
