@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   profile as staticProfile,
   projects as staticProjects,
@@ -7,47 +8,62 @@ import {
   certifications as staticCertifications,
   siteSettings as staticSettings,
 } from '@/data/portfolio';
-import type { Profile, Project, Education, Experience, Skill, Certification, SiteSettings } from '@/types/portfolio';
+import type { Profile, Project, Education, Experience, Skill, Certification, SiteSettings, ContactMessage } from '@/types/portfolio';
 
-// Simple wrapper that mimics react-query shape but returns static data
-function useStaticData<T>(data: T) {
+function getStored<T>(key: string, fallback: T): T {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function useStaticOrStored<T>(key: string, fallback: T) {
+  const [data] = useState<T>(() => getStored(key, fallback));
   return { data, isLoading: false, error: null };
 }
 
 export function useProfile() {
-  return useStaticData<Profile | null>(staticProfile);
+  return useStaticOrStored<Profile | null>('portfolio_profile', staticProfile);
 }
 
 export function useProjects() {
-  return useStaticData<Project[]>(staticProjects);
+  return useStaticOrStored<Project[]>('portfolio_projects', staticProjects);
 }
 
 export function useFeaturedProjects() {
-  const featured = staticProjects.filter((p) => p.is_featured);
-  return useStaticData<Project[]>(featured);
+  const all = getStored<Project[]>('portfolio_projects', staticProjects);
+  const featured = all.filter((p) => p.is_featured);
+  return { data: featured, isLoading: false, error: null };
 }
 
 export function useProject(id: string) {
-  const project = staticProjects.find((p) => p.id === id) || null;
-  return useStaticData<Project | null>(project);
+  const all = getStored<Project[]>('portfolio_projects', staticProjects);
+  const project = all.find((p) => p.id === id) || null;
+  return { data: project, isLoading: false, error: null };
 }
 
 export function useEducation() {
-  return useStaticData<Education[]>(staticEducation);
+  return useStaticOrStored<Education[]>('portfolio_education', staticEducation);
 }
 
 export function useExperience() {
-  return useStaticData<Experience[]>(staticExperience);
+  return useStaticOrStored<Experience[]>('portfolio_experience', staticExperience);
 }
 
 export function useSkills() {
-  return useStaticData<Skill[]>(staticSkills);
+  return useStaticOrStored<Skill[]>('portfolio_skills', staticSkills);
 }
 
 export function useCertifications() {
-  return useStaticData<Certification[]>(staticCertifications);
+  return useStaticOrStored<Certification[]>('portfolio_certifications', staticCertifications);
 }
 
 export function useSiteSettings() {
-  return useStaticData<SiteSettings | null>(staticSettings);
+  return useStaticOrStored<SiteSettings | null>('portfolio_settings', staticSettings);
+}
+
+export function useContactMessages() {
+  return useStaticOrStored<ContactMessage[]>('portfolio_messages', []);
 }
