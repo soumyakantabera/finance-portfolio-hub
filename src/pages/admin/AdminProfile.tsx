@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,10 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { useProfile } from '@/hooks/usePortfolioData';
-import { supabase } from '@/integrations/supabase/client';
+import { useLocalObject } from '@/hooks/useLocalStorage';
+import { profile as staticProfile } from '@/data/portfolio';
+import type { Profile } from '@/types/portfolio';
 
 const profileSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -29,8 +28,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const AdminProfile = () => {
-  const { data: profile, isLoading } = useProfile();
-  const queryClient = useQueryClient();
+  const { data: profile, update: updateProfile } = useLocalObject<Profile>('portfolio_profile', staticProfile);
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -48,54 +46,27 @@ const AdminProfile = () => {
     },
   });
 
-  const onSubmit = async (data: ProfileFormData) => {
+  const onSubmit = (data: ProfileFormData) => {
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from('profile')
-        .update({
-          name: data.name,
-          tagline: data.tagline || null,
-          bio: data.bio || null,
-          email: data.email || null,
-          linkedin_url: data.linkedin_url || null,
-          github_url: data.github_url || null,
-          photo_url: data.photo_url || null,
-          resume_url: data.resume_url || null,
-        })
-        .eq('id', profile?.id);
-
-      if (error) throw error;
-
-      await queryClient.invalidateQueries({ queryKey: ['profile'] });
-      toast({ title: 'Profile updated', description: 'Your changes have been saved.' });
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message || 'Failed to update profile.',
-        variant: 'destructive',
+      updateProfile({
+        name: data.name,
+        tagline: data.tagline || null,
+        bio: data.bio || null,
+        email: data.email || null,
+        linkedin_url: data.linkedin_url || null,
+        github_url: data.github_url || null,
+        photo_url: data.photo_url || null,
+        resume_url: data.resume_url || null,
+        updated_at: new Date().toISOString(),
       });
+      toast({ title: 'Profile updated', description: 'Your changes have been saved.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to update profile.', variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
   };
-
-  if (isLoading) {
-    return (
-      <AdminLayout>
-        <div className="space-y-6">
-          <Skeleton className="h-10 w-1/3" />
-          <Card>
-            <CardContent className="p-6 space-y-4">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-10 w-full" />
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </AdminLayout>
-    );
-  }
 
   return (
     <AdminLayout>
@@ -113,122 +84,30 @@ const AdminProfile = () => {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tagline"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tagline</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Finance Professional | Data Analyst" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="bio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bio</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Tell visitors about yourself..."
-                          className="min-h-[120px]"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="contact@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="linkedin_url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>LinkedIn URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://linkedin.com/in/yourprofile" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="github_url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>GitHub URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://github.com/yourusername" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="photo_url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Photo URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/photo.jpg" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="resume_url"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Resume URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/resume.pdf" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+                <FormField control={form.control} name="name" render={({ field }) => (
+                  <FormItem><FormLabel>Name</FormLabel><FormControl><Input placeholder="John Doe" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="tagline" render={({ field }) => (
+                  <FormItem><FormLabel>Tagline</FormLabel><FormControl><Input placeholder="Finance Professional | Data Analyst" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="bio" render={({ field }) => (
+                  <FormItem><FormLabel>Bio</FormLabel><FormControl><Textarea placeholder="Tell visitors about yourself..." className="min-h-[120px]" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem><FormLabel>Contact Email</FormLabel><FormControl><Input type="email" placeholder="contact@example.com" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="linkedin_url" render={({ field }) => (
+                  <FormItem><FormLabel>LinkedIn URL</FormLabel><FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="github_url" render={({ field }) => (
+                  <FormItem><FormLabel>GitHub URL</FormLabel><FormControl><Input placeholder="https://github.com/yourusername" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="photo_url" render={({ field }) => (
+                  <FormItem><FormLabel>Photo URL</FormLabel><FormControl><Input placeholder="https://example.com/photo.jpg" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="resume_url" render={({ field }) => (
+                  <FormItem><FormLabel>Resume URL</FormLabel><FormControl><Input placeholder="https://example.com/resume.pdf" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
                 <Button type="submit" disabled={isSaving}>
                   <Save className="mr-2 h-4 w-4" />
                   {isSaving ? 'Saving...' : 'Save Changes'}

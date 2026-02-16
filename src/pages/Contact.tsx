@@ -34,15 +34,22 @@ const Contact = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
-    // Simulate sending - no DB
-    setTimeout(() => {
-      toast({
-        title: 'Message sent!',
-        description: "Thank you for reaching out. I'll get back to you soon.",
-      });
+    try {
+      const existing = JSON.parse(localStorage.getItem('portfolio_messages') || '[]');
+      const newMessage = {
+        id: `msg-${Date.now()}`,
+        name: data.name,
+        email: data.email,
+        message: data.message,
+        is_read: false,
+        created_at: new Date().toISOString(),
+      };
+      localStorage.setItem('portfolio_messages', JSON.stringify([newMessage, ...existing]));
+      toast({ title: 'Message sent!', description: "Thank you for reaching out. I'll get back to you soon." });
       form.reset();
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   const contactLinks = [
