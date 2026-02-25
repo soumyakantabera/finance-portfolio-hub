@@ -14,8 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalCrud } from '@/hooks/useLocalStorage';
-import { experience as staticExperience } from '@/data/portfolio';
+import { useSupabaseList, useSupabaseInsert, useSupabaseUpdate, useSupabaseDelete } from '@/hooks/useSupabaseCrud';
 import type { Experience } from '@/types/portfolio';
 
 const experienceSchema = z.object({
@@ -30,7 +29,10 @@ const experienceSchema = z.object({
 type ExperienceFormData = z.infer<typeof experienceSchema>;
 
 const AdminExperience = () => {
-  const { data: experience, add, update, remove } = useLocalCrud<Experience>('portfolio_experience', staticExperience);
+  const { data: experience = [], isLoading } = useSupabaseList<Experience>('experience');
+  const insertExp = useSupabaseInsert<Experience>('experience');
+  const updateExp = useSupabaseUpdate<Experience>('experience');
+  const deleteExp = useSupabaseDelete('experience');
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Experience | null>(null);
@@ -41,26 +43,28 @@ const AdminExperience = () => {
   });
 
   const onSubmit = (data: ExperienceFormData) => {
-    const now = new Date().toISOString();
-    const itemData = {
+    const payload: any = {
       company: data.company, position: data.position,
       start_date: data.start_date || null,
       end_date: data.is_current ? null : data.end_date || null,
       is_current: data.is_current,
       description: data.description || null,
-      updated_at: now,
+      display_order: experience.length + 1,
     };
 
+    const onSuccess = () => {
+      toast({ title: editingItem ? 'Experience updated' : 'Experience added' });
+      setIsDialogOpen(false);
+      setEditingItem(null);
+      form.reset();
+    };
+    const onError = (err: Error) => toast({ title: 'Error', description: err.message, variant: 'destructive' });
+
     if (editingItem) {
-      update(editingItem.id, itemData);
-      toast({ title: 'Experience updated', description: 'Your changes have been saved.' });
+      updateExp.mutate({ id: editingItem.id, changes: payload }, { onSuccess, onError });
     } else {
-      add({ ...itemData, id: `exp-${Date.now()}`, display_order: experience.length + 1, created_at: now } as Experience);
-      toast({ title: 'Experience added', description: 'Your changes have been saved.' });
+      insertExp.mutate(payload, { onSuccess, onError });
     }
-    setIsDialogOpen(false);
-    setEditingItem(null);
-    form.reset();
   };
 
   const openEditDialog = (item: Experience) => {
@@ -70,6 +74,8 @@ const AdminExperience = () => {
   };
 
   const openNewDialog = () => { setEditingItem(null); form.reset(); setIsDialogOpen(true); };
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -98,7 +104,7 @@ const AdminExperience = () => {
                   <FormField control={form.control} name="description" render={({ field }) => (<FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Describe your responsibilities..." className="min-h-[100px]" {...field} /></FormControl><FormMessage /></FormItem>)} />
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                    <Button type="submit">Save</Button>
+                    <Button type="submit" disabled={insertExp.isPending || updateExp.isPending}>Save</Button>
                   </div>
                 </form>
               </Form>
@@ -124,7 +130,7 @@ const AdminExperience = () => {
                   </div>
                   <div className="flex gap-2">
                     <Button variant="ghost" size="icon" onClick={() => openEditDialog(item)}><Pencil className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => { remove(item.id); toast({ title: 'Experience deleted' }); }}><Trash2 className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => deleteExp.mutate(item.id, { onSuccess: () => toast({ title: 'Experience deleted' }) })}><Trash2 className="h-4 w-4" /></Button>
                   </div>
                 </CardContent>
               </Card>

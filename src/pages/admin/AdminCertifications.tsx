@@ -8,15 +8,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalCrud } from '@/hooks/useLocalStorage';
-import { certifications as staticCertifications } from '@/data/portfolio';
+import { useSupabaseList, useSupabaseInsert, useSupabaseUpdate, useSupabaseDelete } from '@/hooks/useSupabaseCrud';
 import type { Certification } from '@/types/portfolio';
 
 type CertFormData = { name: string; issuing_organization: string; issue_date: string; expiration_date: string; credential_url: string; display_order: number; };
 const emptyForm: CertFormData = { name: '', issuing_organization: '', issue_date: '', expiration_date: '', credential_url: '', display_order: 0 };
 
 export default function AdminCertifications() {
-  const { data: certifications, add, update, remove } = useLocalCrud<Certification>('portfolio_certifications', staticCertifications);
+  const { data: certifications = [], isLoading } = useSupabaseList<Certification>('certifications');
+  const insertCert = useSupabaseInsert<Certification>('certifications');
+  const updateCert = useSupabaseUpdate<Certification>('certifications');
+  const deleteCert = useSupabaseDelete('certifications');
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCert, setEditingCert] = useState<Certification | null>(null);
@@ -35,29 +37,36 @@ export default function AdminCertifications() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const certData = { name: form.name, issuing_organization: form.issuing_organization || null, issue_date: form.issue_date || null, expiration_date: form.expiration_date || null, credential_url: form.credential_url || null, display_order: form.display_order };
+    const payload: any = { name: form.name, issuing_organization: form.issuing_organization || null, issue_date: form.issue_date || null, expiration_date: form.expiration_date || null, credential_url: form.credential_url || null, display_order: form.display_order };
+
+    const onSuccess = () => {
+      toast({ title: 'Success', description: editingCert ? 'Certification updated' : 'Certification added' });
+      setIsDialogOpen(false);
+      setForm(emptyForm);
+      setEditingCert(null);
+    };
+    const onError = (err: Error) => toast({ title: 'Error', description: err.message, variant: 'destructive' });
 
     if (editingCert) {
-      update(editingCert.id, certData);
-      toast({ title: 'Success', description: 'Certification updated successfully' });
+      updateCert.mutate({ id: editingCert.id, changes: payload }, { onSuccess, onError });
     } else {
-      add({ ...certData, id: `cert-${Date.now()}`, created_at: new Date().toISOString() } as Certification);
-      toast({ title: 'Success', description: 'Certification added successfully' });
+      insertCert.mutate(payload, { onSuccess, onError });
     }
-    setIsDialogOpen(false);
-    setForm(emptyForm);
-    setEditingCert(null);
   };
 
   const handleDelete = (id: string) => {
-    remove(id);
-    toast({ title: 'Success', description: 'Certification deleted successfully' });
+    deleteCert.mutate(id, {
+      onSuccess: () => toast({ title: 'Success', description: 'Certification deleted' }),
+      onError: (err) => toast({ title: 'Error', description: err.message, variant: 'destructive' }),
+    });
   };
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return 'N/A';
     return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
   };
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -82,7 +91,7 @@ export default function AdminCertifications() {
                 <div className="space-y-2"><Label htmlFor="display_order">Display Order</Label><Input id="display_order" type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
                 <div className="flex justify-end gap-2 pt-4">
                   <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                  <Button type="submit">{editingCert ? 'Save Changes' : 'Add Certification'}</Button>
+                  <Button type="submit" disabled={insertCert.isPending || updateCert.isPending}>{editingCert ? 'Save Changes' : 'Add Certification'}</Button>
                 </div>
               </form>
             </DialogContent>
@@ -109,7 +118,7 @@ export default function AdminCertifications() {
                       <AlertDialog>
                         <AlertDialogTrigger asChild><Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button></AlertDialogTrigger>
                         <AlertDialogContent>
-                          <AlertDialogHeader><AlertDialogTitle>Delete Certification</AlertDialogTitle><AlertDialogDescription>Are you sure you want to delete "{cert.name}"? This action cannot be undone.</AlertDialogDescription></AlertDialogHeader>
+                          <AlertDialogHeader><AlertDialogTitle>Delete Certification</AlertDialogTitle><AlertDialogDescription>Are you sure you want to delete "{cert.name}"?</AlertDialogDescription></AlertDialogHeader>
                           <AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => handleDelete(cert.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction></AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>

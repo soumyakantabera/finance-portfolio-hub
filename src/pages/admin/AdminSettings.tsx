@@ -1,17 +1,15 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Save } from 'lucide-react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalObject } from '@/hooks/useLocalStorage';
-import { siteSettings as staticSettings } from '@/data/portfolio';
+import { useSupabaseSingle, useSupabaseUpsert } from '@/hooks/useSupabaseCrud';
 import type { SiteSettings } from '@/types/portfolio';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Save } from 'lucide-react';
 
 const settingsSchema = z.object({
   site_title: z.string().min(1, 'Site title is required'),
@@ -23,9 +21,9 @@ const settingsSchema = z.object({
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
 const AdminSettings = () => {
-  const { data: settings, update: updateSettings } = useLocalObject<SiteSettings>('portfolio_settings', staticSettings);
+  const { data: settings, isLoading } = useSupabaseSingle<SiteSettings>('site_settings');
+  const upsertSettings = useSupabaseUpsert<SiteSettings>('site_settings');
   const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
@@ -38,22 +36,19 @@ const AdminSettings = () => {
   });
 
   const onSubmit = (data: SettingsFormData) => {
-    setIsSaving(true);
-    try {
-      updateSettings({
-        site_title: data.site_title,
-        tagline: data.tagline || null,
-        contact_email: data.contact_email || null,
-        calendly_url: data.calendly_url || null,
-        updated_at: new Date().toISOString(),
-      });
-      toast({ title: 'Settings updated', description: 'Your changes have been saved.' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to update settings.', variant: 'destructive' });
-    } finally {
-      setIsSaving(false);
-    }
+    upsertSettings.mutate({
+      ...(settings?.id ? { id: settings.id } : {}),
+      site_title: data.site_title,
+      tagline: data.tagline || null,
+      contact_email: data.contact_email || null,
+      calendly_url: data.calendly_url || null,
+    } as any, {
+      onSuccess: () => toast({ title: 'Settings updated', description: 'Your changes have been saved.' }),
+      onError: (err) => toast({ title: 'Error', description: err.message, variant: 'destructive' }),
+    });
   };
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -74,9 +69,9 @@ const AdminSettings = () => {
                 <FormField control={form.control} name="tagline" render={({ field }) => (<FormItem><FormLabel>Tagline</FormLabel><FormControl><Input placeholder="Showcasing my finance journey" {...field} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="contact_email" render={({ field }) => (<FormItem><FormLabel>Contact Email</FormLabel><FormControl><Input type="email" placeholder="contact@example.com" {...field} /></FormControl><FormMessage /></FormItem>)} />
                 <FormField control={form.control} name="calendly_url" render={({ field }) => (<FormItem><FormLabel>Calendly URL (optional)</FormLabel><FormControl><Input placeholder="https://calendly.com/yourname" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <Button type="submit" disabled={isSaving}>
+                <Button type="submit" disabled={upsertSettings.isPending}>
                   <Save className="mr-2 h-4 w-4" />
-                  {isSaving ? 'Saving...' : 'Save Settings'}
+                  {upsertSettings.isPending ? 'Saving...' : 'Save Settings'}
                 </Button>
               </form>
             </Form>
