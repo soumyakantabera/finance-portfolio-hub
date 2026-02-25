@@ -14,8 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalCrud } from '@/hooks/useLocalStorage';
-import { projects as staticProjects } from '@/data/portfolio';
+import { useSupabaseList, useSupabaseInsert, useSupabaseUpdate, useSupabaseDelete } from '@/hooks/useSupabaseCrud';
 import type { Project } from '@/types/portfolio';
 
 const projectSchema = z.object({
@@ -38,7 +37,10 @@ type ProjectFormData = z.infer<typeof projectSchema>;
 const categories = ['Financial Models', 'Case Studies', 'Code', 'Research'];
 
 const AdminProjects = () => {
-  const { data: projects, add, update, remove } = useLocalCrud<Project>('portfolio_projects', staticProjects);
+  const { data: projects = [], isLoading } = useSupabaseList<Project>('projects');
+  const insertProject = useSupabaseInsert<Project>('projects');
+  const updateProject = useSupabaseUpdate<Project>('projects');
+  const deleteProject = useSupabaseDelete('projects');
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -49,8 +51,7 @@ const AdminProjects = () => {
   });
 
   const onSubmit = (data: ProjectFormData) => {
-    const now = new Date().toISOString();
-    const projectData: Omit<Project, 'id' | 'created_at'> & { id?: string; created_at?: string } = {
+    const payload: any = {
       title: data.title,
       short_description: data.short_description || null,
       description: data.description || null,
@@ -65,25 +66,28 @@ const AdminProjects = () => {
       tags: data.tags ? data.tags.split(',').map((t) => t.trim()) : [],
       is_featured: data.is_featured,
       display_order: projects.length + 1,
-      updated_at: now,
     };
 
-    if (editingProject) {
-      update(editingProject.id, projectData);
-      toast({ title: 'Project updated', description: 'Your changes have been saved.' });
-    } else {
-      add({ ...projectData, id: `proj-${Date.now()}`, created_at: now } as Project);
-      toast({ title: 'Project created', description: 'Your changes have been saved.' });
-    }
+    const onSuccess = () => {
+      toast({ title: editingProject ? 'Project updated' : 'Project created' });
+      setIsDialogOpen(false);
+      setEditingProject(null);
+      form.reset();
+    };
+    const onError = (err: Error) => toast({ title: 'Error', description: err.message, variant: 'destructive' });
 
-    setIsDialogOpen(false);
-    setEditingProject(null);
-    form.reset();
+    if (editingProject) {
+      updateProject.mutate({ id: editingProject.id, changes: payload }, { onSuccess, onError });
+    } else {
+      insertProject.mutate(payload, { onSuccess, onError });
+    }
   };
 
   const handleDelete = (id: string) => {
-    remove(id);
-    toast({ title: 'Project deleted' });
+    deleteProject.mutate(id, {
+      onSuccess: () => toast({ title: 'Project deleted' }),
+      onError: (err) => toast({ title: 'Error', description: err.message, variant: 'destructive' }),
+    });
   };
 
   const openEditDialog = (project: Project) => {
@@ -99,6 +103,8 @@ const AdminProjects = () => {
   };
 
   const openNewDialog = () => { setEditingProject(null); form.reset(); setIsDialogOpen(true); };
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -143,7 +149,7 @@ const AdminProjects = () => {
                   )} />
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                    <Button type="submit">Save Project</Button>
+                    <Button type="submit" disabled={insertProject.isPending || updateProject.isPending}>Save Project</Button>
                   </div>
                 </form>
               </Form>
@@ -170,7 +176,7 @@ const AdminProjects = () => {
                       {project.is_featured && <Badge>Featured</Badge>}
                     </div>
                     <p className="text-sm text-muted-foreground">{project.category}</p>
-                    {project.tags?.length > 0 && (
+                    {project.tags && project.tags.length > 0 && (
                       <div className="flex gap-1 mt-1 flex-wrap">
                         {project.tags.slice(0, 3).map((tag) => (<Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>))}
                       </div>

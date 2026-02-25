@@ -3,15 +3,14 @@ import { Link } from 'react-router-dom';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useLocalCrud } from '@/hooks/useLocalStorage';
-import { projects as staticProjects, experience as staticExperience, skills as staticSkills } from '@/data/portfolio';
+import { useSupabaseList } from '@/hooks/useSupabaseCrud';
 import type { Project, Experience, Skill, ContactMessage } from '@/types/portfolio';
 
 const AdminDashboard = () => {
-  const { data: projects } = useLocalCrud<Project>('portfolio_projects', staticProjects);
-  const { data: experience } = useLocalCrud<Experience>('portfolio_experience', staticExperience);
-  const { data: skills } = useLocalCrud<Skill>('portfolio_skills', staticSkills);
-  const { data: messages } = useLocalCrud<ContactMessage>('portfolio_messages', []);
+  const { data: projects = [] } = useSupabaseList<Project>('projects');
+  const { data: experience = [] } = useSupabaseList<Experience>('experience');
+  const { data: skills = [] } = useSupabaseList<Skill>('skills');
+  const { data: messages = [] } = useSupabaseList<ContactMessage>('contact_messages', 'created_at');
 
   const unreadMessages = messages.filter((m) => !m.is_read).length;
 
@@ -72,7 +71,7 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {messages.slice(0, 5).map((message) => (
+                {[...messages].reverse().slice(0, 5).map((message) => (
                   <div key={message.id} className="flex items-start gap-4 p-3 rounded-lg bg-muted/50">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">

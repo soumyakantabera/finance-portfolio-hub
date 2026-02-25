@@ -10,8 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalObject } from '@/hooks/useLocalStorage';
-import { profile as staticProfile } from '@/data/portfolio';
+import { useSupabaseSingle, useSupabaseUpsert } from '@/hooks/useSupabaseCrud';
 import type { Profile } from '@/types/portfolio';
 
 const profileSchema = z.object({
@@ -28,9 +27,9 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const AdminProfile = () => {
-  const { data: profile, update: updateProfile } = useLocalObject<Profile>('portfolio_profile', staticProfile);
+  const { data: profile, isLoading } = useSupabaseSingle<Profile>('profile');
+  const upsertProfile = useSupabaseUpsert<Profile>('profile');
   const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -47,26 +46,23 @@ const AdminProfile = () => {
   });
 
   const onSubmit = (data: ProfileFormData) => {
-    setIsSaving(true);
-    try {
-      updateProfile({
-        name: data.name,
-        tagline: data.tagline || null,
-        bio: data.bio || null,
-        email: data.email || null,
-        linkedin_url: data.linkedin_url || null,
-        github_url: data.github_url || null,
-        photo_url: data.photo_url || null,
-        resume_url: data.resume_url || null,
-        updated_at: new Date().toISOString(),
-      });
-      toast({ title: 'Profile updated', description: 'Your changes have been saved.' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to update profile.', variant: 'destructive' });
-    } finally {
-      setIsSaving(false);
-    }
+    upsertProfile.mutate({
+      ...(profile?.id ? { id: profile.id } : {}),
+      name: data.name,
+      tagline: data.tagline || null,
+      bio: data.bio || null,
+      email: data.email || null,
+      linkedin_url: data.linkedin_url || null,
+      github_url: data.github_url || null,
+      photo_url: data.photo_url || null,
+      resume_url: data.resume_url || null,
+    } as any, {
+      onSuccess: () => toast({ title: 'Profile updated', description: 'Your changes have been saved.' }),
+      onError: (err) => toast({ title: 'Error', description: err.message, variant: 'destructive' }),
+    });
   };
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -75,7 +71,6 @@ const AdminProfile = () => {
           <h1 className="text-3xl font-bold">Profile</h1>
           <p className="text-muted-foreground">Manage your personal information</p>
         </div>
-
         <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
@@ -84,33 +79,17 @@ const AdminProfile = () => {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField control={form.control} name="name" render={({ field }) => (
-                  <FormItem><FormLabel>Name</FormLabel><FormControl><Input placeholder="John Doe" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="tagline" render={({ field }) => (
-                  <FormItem><FormLabel>Tagline</FormLabel><FormControl><Input placeholder="Finance Professional | Data Analyst" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="bio" render={({ field }) => (
-                  <FormItem><FormLabel>Bio</FormLabel><FormControl><Textarea placeholder="Tell visitors about yourself..." className="min-h-[120px]" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem><FormLabel>Contact Email</FormLabel><FormControl><Input type="email" placeholder="contact@example.com" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="linkedin_url" render={({ field }) => (
-                  <FormItem><FormLabel>LinkedIn URL</FormLabel><FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="github_url" render={({ field }) => (
-                  <FormItem><FormLabel>GitHub URL</FormLabel><FormControl><Input placeholder="https://github.com/yourusername" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="photo_url" render={({ field }) => (
-                  <FormItem><FormLabel>Photo URL</FormLabel><FormControl><Input placeholder="https://example.com/photo.jpg" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="resume_url" render={({ field }) => (
-                  <FormItem><FormLabel>Resume URL</FormLabel><FormControl><Input placeholder="https://example.com/resume.pdf" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <Button type="submit" disabled={isSaving}>
+                <FormField control={form.control} name="name" render={({ field }) => (<FormItem><FormLabel>Name</FormLabel><FormControl><Input placeholder="John Doe" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="tagline" render={({ field }) => (<FormItem><FormLabel>Tagline</FormLabel><FormControl><Input placeholder="Finance Professional | Data Analyst" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="bio" render={({ field }) => (<FormItem><FormLabel>Bio</FormLabel><FormControl><Textarea placeholder="Tell visitors about yourself..." className="min-h-[120px]" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="email" render={({ field }) => (<FormItem><FormLabel>Contact Email</FormLabel><FormControl><Input type="email" placeholder="contact@example.com" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="linkedin_url" render={({ field }) => (<FormItem><FormLabel>LinkedIn URL</FormLabel><FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="github_url" render={({ field }) => (<FormItem><FormLabel>GitHub URL</FormLabel><FormControl><Input placeholder="https://github.com/yourusername" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="photo_url" render={({ field }) => (<FormItem><FormLabel>Photo URL</FormLabel><FormControl><Input placeholder="https://example.com/photo.jpg" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="resume_url" render={({ field }) => (<FormItem><FormLabel>Resume URL</FormLabel><FormControl><Input placeholder="https://example.com/resume.pdf" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <Button type="submit" disabled={upsertProfile.isPending}>
                   <Save className="mr-2 h-4 w-4" />
-                  {isSaving ? 'Saving...' : 'Save Changes'}
+                  {upsertProfile.isPending ? 'Saving...' : 'Save Changes'}
                 </Button>
               </form>
             </Form>

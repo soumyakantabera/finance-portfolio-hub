@@ -13,8 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalCrud } from '@/hooks/useLocalStorage';
-import { skills as staticSkills } from '@/data/portfolio';
+import { useSupabaseList, useSupabaseInsert, useSupabaseUpdate, useSupabaseDelete } from '@/hooks/useSupabaseCrud';
 import type { Skill } from '@/types/portfolio';
 
 const skillSchema = z.object({
@@ -27,7 +26,10 @@ type SkillFormData = z.infer<typeof skillSchema>;
 const categories = ['Technical', 'Soft Skills', 'Tools', 'Languages'];
 
 const AdminSkills = () => {
-  const { data: skills, add, update, remove } = useLocalCrud<Skill>('portfolio_skills', staticSkills);
+  const { data: skills = [], isLoading } = useSupabaseList<Skill>('skills');
+  const insertSkill = useSupabaseInsert<Skill>('skills');
+  const updateSkill = useSupabaseUpdate<Skill>('skills');
+  const deleteSkill = useSupabaseDelete('skills');
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Skill | null>(null);
@@ -38,16 +40,20 @@ const AdminSkills = () => {
   });
 
   const onSubmit = (data: SkillFormData) => {
+    const payload: any = { name: data.name, category: data.category, proficiency: data.proficiency, display_order: skills.length + 1 };
+    const onSuccess = () => {
+      toast({ title: editingItem ? 'Skill updated' : 'Skill added' });
+      setIsDialogOpen(false);
+      setEditingItem(null);
+      form.reset();
+    };
+    const onError = (err: Error) => toast({ title: 'Error', description: err.message, variant: 'destructive' });
+
     if (editingItem) {
-      update(editingItem.id, { name: data.name, category: data.category, proficiency: data.proficiency });
-      toast({ title: 'Skill updated', description: 'Your changes have been saved.' });
+      updateSkill.mutate({ id: editingItem.id, changes: payload }, { onSuccess, onError });
     } else {
-      add({ id: `s-${Date.now()}`, name: data.name, category: data.category, proficiency: data.proficiency, display_order: skills.length + 1, created_at: new Date().toISOString() });
-      toast({ title: 'Skill added', description: 'Your changes have been saved.' });
+      insertSkill.mutate(payload, { onSuccess, onError });
     }
-    setIsDialogOpen(false);
-    setEditingItem(null);
-    form.reset();
   };
 
   const openEditDialog = (item: Skill) => {
@@ -64,6 +70,8 @@ const AdminSkills = () => {
     acc[cat].push(skill);
     return acc;
   }, {} as Record<string, Skill[]>);
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -89,7 +97,7 @@ const AdminSkills = () => {
                   <FormField control={form.control} name="proficiency" render={({ field }) => (<FormItem><FormLabel>Proficiency: {field.value}%</FormLabel><FormControl><Slider min={0} max={100} step={5} value={[field.value]} onValueChange={(v) => field.onChange(v[0])} /></FormControl><FormMessage /></FormItem>)} />
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                    <Button type="submit">Save</Button>
+                    <Button type="submit" disabled={insertSkill.isPending || updateSkill.isPending}>Save</Button>
                   </div>
                 </form>
               </Form>
@@ -110,7 +118,7 @@ const AdminSkills = () => {
                         <div className="flex items-center gap-2">
                           <span className="text-sm text-muted-foreground">{skill.proficiency}%</span>
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openEditDialog(skill)}><Pencil className="h-3 w-3" /></Button>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive" onClick={() => { remove(skill.id); toast({ title: 'Skill deleted' }); }}><Trash2 className="h-3 w-3" /></Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive" onClick={() => deleteSkill.mutate(skill.id, { onSuccess: () => toast({ title: 'Skill deleted' }) })}><Trash2 className="h-3 w-3" /></Button>
                         </div>
                       </div>
                       <Progress value={skill.proficiency} className="h-2" />

@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useProfile, useSiteSettings } from '@/hooks/usePortfolioData';
+import { supabase } from '@/integrations/supabase/client';
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -35,18 +36,16 @@ const Contact = () => {
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
     try {
-      const existing = JSON.parse(localStorage.getItem('portfolio_messages') || '[]');
-      const newMessage = {
-        id: `msg-${Date.now()}`,
+      const { error } = await supabase.from('contact_messages').insert({
         name: data.name,
         email: data.email,
         message: data.message,
-        is_read: false,
-        created_at: new Date().toISOString(),
-      };
-      localStorage.setItem('portfolio_messages', JSON.stringify([newMessage, ...existing]));
+      });
+      if (error) throw error;
       toast({ title: 'Message sent!', description: "Thank you for reaching out. I'll get back to you soon." });
       form.reset();
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message || 'Failed to send message.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -65,12 +64,8 @@ const Contact = () => {
           <div className="container max-w-4xl">
             <FadeIn>
               <div className="mb-16">
-                <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground mb-4">
-                  Connect
-                </p>
-                <h1 className="text-5xl md:text-7xl font-bold font-display leading-[0.9] mb-6">
-                  Get in Touch
-                </h1>
+                <p className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground mb-4">Connect</p>
+                <h1 className="text-5xl md:text-7xl font-bold font-display leading-[0.9] mb-6">Get in Touch</h1>
                 <div className="w-16 h-px bg-foreground" />
               </div>
             </FadeIn>
@@ -78,37 +73,17 @@ const Contact = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
               <FadeIn delay={0.1}>
                 <div>
-                  <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
-                    Send a Message
-                  </h2>
+                  <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Send a Message</h2>
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                       <FormField control={form.control} name="name" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs uppercase tracking-[0.15em]">Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your name" className="border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormItem><FormLabel className="text-xs uppercase tracking-[0.15em]">Name</FormLabel><FormControl><Input placeholder="Your name" className="border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0" {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                       <FormField control={form.control} name="email" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs uppercase tracking-[0.15em]">Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="your@email.com" className="border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormItem><FormLabel className="text-xs uppercase tracking-[0.15em]">Email</FormLabel><FormControl><Input type="email" placeholder="your@email.com" className="border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0" {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                       <FormField control={form.control} name="message" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs uppercase tracking-[0.15em]">Message</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Your message..." className="min-h-[150px] border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0 resize-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                        <FormItem><FormLabel className="text-xs uppercase tracking-[0.15em]">Message</FormLabel><FormControl><Textarea placeholder="Your message..." className="min-h-[150px] border-0 border-b border-border bg-transparent focus-visible:ring-0 focus-visible:border-foreground px-0 resize-none" {...field} /></FormControl><FormMessage /></FormItem>
                       )} />
                       <Button type="submit" className="w-full uppercase tracking-wider text-xs" disabled={isSubmitting}>
                         {isSubmitting ? 'Sending...' : (<><Send className="mr-2 h-3 w-3" />Send Message</>)}
@@ -120,18 +95,10 @@ const Contact = () => {
 
               <FadeIn delay={0.2}>
                 <div>
-                  <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
-                    Other Ways to Connect
-                  </h2>
+                  <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">Other Ways to Connect</h2>
                   <div className="space-y-0">
                     {contactLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between py-5 border-t border-border group transition-colors hover:bg-secondary/50"
-                      >
+                      <a key={link.label} href={link.href} target={link.href.startsWith('mailto:') ? undefined : '_blank'} rel="noopener noreferrer" className="flex items-center justify-between py-5 border-t border-border group transition-colors hover:bg-secondary/50">
                         <div className="flex items-center gap-4">
                           <link.icon className="h-4 w-4 text-muted-foreground" />
                           <div>

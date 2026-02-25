@@ -7,28 +7,36 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalCrud } from '@/hooks/useLocalStorage';
+import { useSupabaseList, useSupabaseUpdate, useSupabaseDelete } from '@/hooks/useSupabaseCrud';
 import type { ContactMessage } from '@/types/portfolio';
 
 const AdminMessages = () => {
-  const { data: messages, update, remove } = useLocalCrud<ContactMessage>('portfolio_messages', []);
+  const { data: messages = [], isLoading } = useSupabaseList<ContactMessage>('contact_messages', 'created_at');
+  const updateMsg = useSupabaseUpdate<ContactMessage>('contact_messages');
+  const deleteMsg = useSupabaseDelete('contact_messages');
   const { toast } = useToast();
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+
+  // Reverse to show newest first
+  const sortedMessages = [...messages].reverse();
 
   const openMessage = (message: ContactMessage) => {
     setSelectedMessage(message);
     if (!message.is_read) {
-      update(message.id, { is_read: true });
+      updateMsg.mutate({ id: message.id, changes: { is_read: true } as any });
     }
   };
 
   const handleDelete = (id: string) => {
-    remove(id);
-    toast({ title: 'Message deleted' });
-    setSelectedMessage(null);
+    deleteMsg.mutate(id, {
+      onSuccess: () => { toast({ title: 'Message deleted' }); setSelectedMessage(null); },
+      onError: (err) => toast({ title: 'Error', description: err.message, variant: 'destructive' }),
+    });
   };
 
   const unreadCount = messages.filter((m) => !m.is_read).length;
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -41,9 +49,9 @@ const AdminMessages = () => {
           </p>
         </div>
 
-        {messages.length > 0 ? (
+        {sortedMessages.length > 0 ? (
           <div className="space-y-4">
-            {messages.map((message) => (
+            {sortedMessages.map((message) => (
               <Card key={message.id} className={`cursor-pointer transition-colors hover:bg-muted/50 ${!message.is_read ? 'border-primary' : ''}`} onClick={() => openMessage(message)}>
                 <CardContent className="flex items-center gap-4 p-4">
                   <div className="flex-shrink-0">{message.is_read ? <MailOpen className="h-5 w-5 text-muted-foreground" /> : <Mail className="h-5 w-5 text-primary" />}</div>

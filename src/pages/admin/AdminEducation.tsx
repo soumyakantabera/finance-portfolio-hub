@@ -12,8 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalCrud } from '@/hooks/useLocalStorage';
-import { education as staticEducation } from '@/data/portfolio';
+import { useSupabaseList, useSupabaseInsert, useSupabaseUpdate, useSupabaseDelete } from '@/hooks/useSupabaseCrud';
 import type { Education } from '@/types/portfolio';
 
 const educationSchema = z.object({
@@ -28,7 +27,10 @@ const educationSchema = z.object({
 type EducationFormData = z.infer<typeof educationSchema>;
 
 const AdminEducation = () => {
-  const { data: education, add, update, remove } = useLocalCrud<Education>('portfolio_education', staticEducation);
+  const { data: education = [], isLoading } = useSupabaseList<Education>('education');
+  const insertEdu = useSupabaseInsert<Education>('education');
+  const updateEdu = useSupabaseUpdate<Education>('education');
+  const deleteEdu = useSupabaseDelete('education');
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Education | null>(null);
@@ -39,24 +41,27 @@ const AdminEducation = () => {
   });
 
   const onSubmit = (data: EducationFormData) => {
-    const now = new Date().toISOString();
-    const itemData = {
+    const payload: any = {
       institution: data.institution, degree: data.degree,
       field_of_study: data.field_of_study || null,
       start_date: data.start_date || null, end_date: data.end_date || null,
-      description: data.description || null, updated_at: now,
+      description: data.description || null,
+      display_order: education.length + 1,
     };
 
+    const onSuccess = () => {
+      toast({ title: editingItem ? 'Education updated' : 'Education added' });
+      setIsDialogOpen(false);
+      setEditingItem(null);
+      form.reset();
+    };
+    const onError = (err: Error) => toast({ title: 'Error', description: err.message, variant: 'destructive' });
+
     if (editingItem) {
-      update(editingItem.id, itemData);
-      toast({ title: 'Education updated', description: 'Your changes have been saved.' });
+      updateEdu.mutate({ id: editingItem.id, changes: payload }, { onSuccess, onError });
     } else {
-      add({ ...itemData, id: `ed-${Date.now()}`, display_order: education.length + 1, created_at: now } as Education);
-      toast({ title: 'Education added', description: 'Your changes have been saved.' });
+      insertEdu.mutate(payload, { onSuccess, onError });
     }
-    setIsDialogOpen(false);
-    setEditingItem(null);
-    form.reset();
   };
 
   const openEditDialog = (item: Education) => {
@@ -66,6 +71,8 @@ const AdminEducation = () => {
   };
 
   const openNewDialog = () => { setEditingItem(null); form.reset(); setIsDialogOpen(true); };
+
+  if (isLoading) return <AdminLayout><div className="text-muted-foreground">Loading...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -94,7 +101,7 @@ const AdminEducation = () => {
                   <FormField control={form.control} name="description" render={({ field }) => (<FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Honors, activities, relevant coursework..." className="min-h-[100px]" {...field} /></FormControl><FormMessage /></FormItem>)} />
                   <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                    <Button type="submit">Save</Button>
+                    <Button type="submit" disabled={insertEdu.isPending || updateEdu.isPending}>Save</Button>
                   </div>
                 </form>
               </Form>
@@ -117,7 +124,7 @@ const AdminEducation = () => {
                   </div>
                   <div className="flex gap-2">
                     <Button variant="ghost" size="icon" onClick={() => openEditDialog(item)}><Pencil className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => { remove(item.id); toast({ title: 'Education deleted' }); }}><Trash2 className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => deleteEdu.mutate(item.id, { onSuccess: () => toast({ title: 'Education deleted' }) })}><Trash2 className="h-4 w-4" /></Button>
                   </div>
                 </CardContent>
               </Card>
