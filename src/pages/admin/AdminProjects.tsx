@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Pencil, Trash2, GripVertical } from 'lucide-react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -22,7 +23,7 @@ const projectSchema = z.object({
   short_description: z.string().optional(),
   description: z.string().optional(),
   category: z.string().min(1, 'Category is required'),
-  thumbnail_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  thumbnail_url: z.string().optional(),
   github_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_docs_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_sheets_url: z.string().url('Invalid URL').optional().or(z.literal('')),
@@ -130,7 +131,7 @@ const AdminProjects = () => {
                   <FormField control={form.control} name="short_description" render={({ field }) => (<FormItem><FormLabel>Short Description</FormLabel><FormControl><Input placeholder="Brief description for cards" {...field} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="description" render={({ field }) => (<FormItem><FormLabel>Full Description</FormLabel><FormControl><Textarea placeholder="Detailed project description" className="min-h-[100px]" {...field} /></FormControl><FormMessage /></FormItem>)} />
                   <FormField control={form.control} name="tags" render={({ field }) => (<FormItem><FormLabel>Tags (comma-separated)</FormLabel><FormControl><Input placeholder="Python, DCF, Valuation" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                  <FormField control={form.control} name="thumbnail_url" render={({ field }) => (<FormItem><FormLabel>Thumbnail URL</FormLabel><FormControl><Input placeholder="https://example.com/image.jpg" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                  <FormField control={form.control} name="thumbnail_url" render={({ field }) => (<FormItem><FormLabel>Thumbnail</FormLabel><FormControl><ImageUpload value={field.value} onChange={field.onChange} /></FormControl><FormMessage /></FormItem>)} />
                   <div className="grid grid-cols-2 gap-4">
                     <FormField control={form.control} name="github_url" render={({ field }) => (<FormItem><FormLabel>GitHub URL</FormLabel><FormControl><Input placeholder="https://github.com/..." {...field} /></FormControl><FormMessage /></FormItem>)} />
                     <FormField control={form.control} name="external_url" render={({ field }) => (<FormItem><FormLabel>External URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>)} />
