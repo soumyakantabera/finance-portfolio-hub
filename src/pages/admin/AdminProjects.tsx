@@ -23,7 +23,7 @@ const projectSchema = z.object({
   short_description: z.string().optional(),
   description: z.string().optional(),
   category: z.string().min(1, 'Category is required'),
-  thumbnail_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  thumbnail_url: z.string().optional(),
   github_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_docs_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   google_sheets_url: z.string().url('Invalid URL').optional().or(z.literal('')),
